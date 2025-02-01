@@ -92,7 +92,7 @@ export class HomeController {
       date: new Date(),
     })
       .then(resp => {
-        this.navigate('success', { state: resp })
+        this.navigate('/success', { state: resp })
       })
       .catch(e => console.log((e as Error)))
       .finally(() => { setLoading(false) })

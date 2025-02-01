@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore/lite';
+import { addDoc, collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore/lite';
 import { ProductionProcess } from "../entities/ProductionProcess";
 import { CreateEfficiencyRecordRequestDTO, ProductionEfficiencyRecord } from "../entities/ProductionEfficiencyRecord";
 import { ClassificationTypes, classificationTypesMap } from "../entities/ProductionEfficiencyLoss";
@@ -27,7 +27,8 @@ export async function getProcesses(ute: string) {
   if (!cacheProcesses[ute] && ute != '') {
     const querySnapshot = await getDocs(query(
       collection(db, 'process'),
-      where('ute', '==', ute)
+      where('ute', '==', ute),
+      // orderBy('id', 'asc')
     ))
     // console.log('external', cacheProcesses)
     cacheProcesses[ute] = querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
@@ -77,7 +78,8 @@ export async function createEfficiencyRecord(efficiencyRecordData: CreateEfficie
     productionProcessId: productionProcess.id,
     productionTimeInMinutes: efficiencyRecordData.productionTimeInMinutes,
     turn: efficiencyRecordData.turn,
-    ute: efficiencyRecordData.ute as ProductionEfficiencyRecord['ute']
+    ute: efficiencyRecordData.ute as ProductionEfficiencyRecord['ute'],
+    hourInterval: efficiencyRecordData.hourInterval
   }
 
   // console.log(JSON.stringify(productionEfficiencyRecord, null, 2))

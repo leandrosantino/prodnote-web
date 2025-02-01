@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/:ute" Component={Home} />
-        <Route path="success" Component={Success} />
+        <Route path="/success" Component={Success} />
       </Routes>
     </BrowserRouter>
   </>
