@@ -3,7 +3,7 @@ import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebas
 import { ProductionProcess } from "../entities/ProductionProcess";
 import { CreateEfficiencyRecordRequestDTO, ProductionEfficiencyRecord } from "../entities/ProductionEfficiencyRecord";
 import { ClassificationTypes, classificationTypesMap } from "../entities/ProductionEfficiencyLoss";
-import { SuccessData } from "../Pages/Home";
+import { SuccessData } from "../modules/home/home.view";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1Yx0-iwYzgQryvR0GPHItDjjDV_XIQg4",
@@ -29,7 +29,7 @@ export async function getProcesses(ute: string) {
       collection(db, 'process'),
       where('ute', '==', ute)
     ))
-    console.log('external', cacheProcesses)
+    // console.log('external', cacheProcesses)
     cacheProcesses[ute] = querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
   }
   return cacheProcesses[ute]
@@ -80,7 +80,7 @@ export async function createEfficiencyRecord(efficiencyRecordData: CreateEfficie
     ute: efficiencyRecordData.ute as ProductionEfficiencyRecord['ute']
   }
 
-  console.log(JSON.stringify(productionEfficiencyRecord, null, 2))
+  // console.log(JSON.stringify(productionEfficiencyRecord, null, 2))
 
   await addDoc(collection(db, 'productionEfficiencyRecord'), productionEfficiencyRecord)
 

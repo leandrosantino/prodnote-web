@@ -13,9 +13,11 @@ export const classificationTypesMap = {
   'Máquina quebrada': 'Breakdowns',
   'Manutenção programada/preventiva': 'Maintenance',
   'Organização/Limpeza/Refeição': 'Organizational Issues',
-  // 'Motivos de qualidade': 'Scrap + Quality Issues',
   'Retrabalho': 'Scrap + Quality Issues',
-  'Refugo': 'Scrap + Quality Issues'
+  'Refugo': 'Scrap + Quality Issues',
+  'RH': 'Organizational Issues',
+  'Logística': 'Organizational Issues',
+  'Eficiência Operacinal': 'Organizational Issues',
 } as const
 
 export type ClassificationTypes = keyof typeof classificationTypesMap
