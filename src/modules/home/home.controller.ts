@@ -1,95 +1,75 @@
-import { singleton } from "tsyringe";
-import { hourIntervals, oeeFormSchema, OeeFormType, ProductionEfficiencyRecord, utePattern } from "../../entities/ProductionEfficiencyRecord";
-import { useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from "react-hook-form";
+import { injectable } from "tsyringe";
+import { hourIntervals, oeeFormSchema, OeeFormType, UteKeys, utePattern } from "../../entities/ProductionEfficiencyRecord";
+import { useFieldArray, useForm } from "react-hook-form";
 import { ProductionProcess } from "../../entities/ProductionProcess";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createEfficiencyRecord, getProcesses } from "../../repositories";
-import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useStateObject } from "../../lib/useStateObject";
 
-
-type State<T> = [T, React.Dispatch<React.SetStateAction<T>>]
-
-@singleton()
+@injectable()
 export class HomeController {
 
-  constructor() { }
+  public form = useForm<OeeFormType>({
+    resolver: zodResolver(oeeFormSchema),
+  })
 
-  private form!: UseFormReturn<OeeFormType>
-  private processesState!: State<ProductionProcess[]>
+  public reasonsField = useFieldArray({
+    control: this.form.control,
+    name: 'reasons',
+  })
 
-  private processLoadState!: State<boolean>
-  loadingState!: State<boolean>
-  private navigate!: NavigateFunction
+  public intervals = useStateObject<string[]>(hourIntervals as any)
+  public loading = useStateObject(false)
+  public processes = useStateObject<ProductionProcess[]>([])
+  public processLoad = useStateObject(false)
 
-  reasonsField!: UseFieldArrayReturn<OeeFormType, "reasons", "id">
+  private navigate = useNavigate()
+  private routeParams = useParams()
 
-  private routeParams!: Readonly<Partial<{ ute: ProductionEfficiencyRecord["ute"]; }>>
-
-  useHourIntervals() {
-    const [intervals, setIntervals] = useState<string[]>(hourIntervals as any)
-
-    useEffect(() => {
-      const turn = this.form.watch('turn')
-      if (turn == '') return
-
-      switch (turn) {
-        case '3': setIntervals(hourIntervals.slice(0, 5)); break;
-        case '1': setIntervals(hourIntervals.slice(5, 15)); break;
-        case '2': setIntervals(hourIntervals.slice(15, 25)); break;
-        default: break;
-      }
-
-    }, [this.form.watch('turn')])
-    return intervals
+  constructor() {
+    useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
+    useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
   }
 
-  useProcesses() {
-    this.navigate = useNavigate()
-    this.routeParams = useParams()
-    const { ute } = this.routeParams
+  private changeHoursInterval() {
+    const turn = this.form.watch('turn')
+    if (turn == '') return
 
-    this.processLoadState = useState(false)
-    this.processesState = useState<ProductionProcess[]>([])
-    this.loadingState = useState(false)
-
-    const [isProcessLoad, setIsProcesLoad] = this.processLoadState
-    const [processes, setProcesses] = this.processesState
-    const [loading] = this.loadingState
-
-    useEffect(() => {
-      if (!ute) return
-      if (!utePattern.test(ute)) return
-      setIsProcesLoad(false)
-      getProcesses(ute)
-        .then(data => {
-          setProcesses(data)
-          setIsProcesLoad(true)
-        })
-        .catch(console.log)
-    }, [ute])
-
-    return {
-      isProcessLoad, processes, loading
+    switch (turn) {
+      case '3': this.intervals.set(hourIntervals.slice(0, 5)); break;
+      case '1': this.intervals.set(hourIntervals.slice(5, 15)); break;
+      case '2': this.intervals.set(hourIntervals.slice(15, 25)); break;
+      default: break;
     }
+  }
 
+  private getProcessesByUte() {
+    if (!this.routeParams.ute) return
+    if (!utePattern.test(this.routeParams.ute)) return
+    this.processLoad.set(false)
+    getProcesses(this.routeParams.ute)
+      .then(data => {
+        this.processes.set(data)
+        this.processLoad.set(true)
+      })
+      .catch(console.log)
   }
 
   handleSave = (data: OeeFormType) => {
-    const [_, setLoading] = this.loadingState
-    const [processes, __] = this.processesState
 
-    if (processes.length == 0) return;
-    setLoading(true)
+    if (this.processes.value.length == 0) return;
+    this.loading.set(true)
 
     if (!this.routeParams.ute || !utePattern.test(this.routeParams.ute)) {
-      setLoading(false)
+      this.loading.set(false)
       return
     }
 
     createEfficiencyRecord({
       ...data,
-      ute: this.routeParams.ute,
+      ute: this.routeParams.ute as UteKeys,
       productionTimeInMinutes: 60,
       date: new Date(),
     })
@@ -97,30 +77,9 @@ export class HomeController {
         this.navigate('/success', { state: resp })
       })
       .catch(e => console.log((e as Error)))
-      .finally(() => { setLoading(false) })
+      .finally(() => { this.loading.set(false) })
   }
 
-
-  useOeeForm() {
-    this.form = useForm<OeeFormType>({
-      resolver: zodResolver(oeeFormSchema),
-      defaultValues: {
-        // piecesQuantity: 100,
-        // hourInterval: '06:00-06:59',
-        // process: 'cln4toycu008zm5joxd9oeadz',
-        // turn: '1',
-        // =======================
-      }
-    })
-
-    this.reasonsField = useFieldArray({
-      control: this.form.control,
-      name: 'reasons',
-    })
-
-
-    return this.form
-  }
 
   addNewReason() {
     this.reasonsField.append({ class: '', description: '', time: 0 })
@@ -132,11 +91,9 @@ export class HomeController {
 
 }
 
-
-// date: '2025-01-02',
-// productionTimeInMinutes: 528,
-// piecesQuantity: 100,
-// name: 'Leandro',
-// process: 'cln4toycu008zm5joxd9oeadz',
-// turn: '1',
-// ute: 'UTE-1'
+// defaultValues: {
+//   piecesQuantity: 100,
+//   hourInterval: '06:00-06:59',
+//   process: 'cln4toycu008zm5joxd9oeadz',
+//   turn: '1',
+// }

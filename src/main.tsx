@@ -5,6 +5,7 @@ import './styles/global.css'
 import { Home } from './modules/home/index'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Success } from './modules/Success'
+import { Dashboard } from './modules/dashboard'
 
 createRoot(document.getElementById('root')!).render(
   <>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/:ute" Component={Home} />
         <Route path="/" Component={Home} />
         <Route path="/success" Component={Success} />
+        <Route path="/dashboard" Component={Dashboard} />
       </Routes>
     </BrowserRouter>
   </>
