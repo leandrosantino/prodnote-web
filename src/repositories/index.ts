@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore/lite';
+import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore/lite';
 import { ProductionProcess } from "../entities/ProductionProcess";
 import { CreateEfficiencyRecordRequestDTO, ProductionEfficiencyRecord } from "../entities/ProductionEfficiencyRecord";
 import { ClassificationTypes, classificationTypesMap } from "../entities/ProductionEfficiencyLoss";
