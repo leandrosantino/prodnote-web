@@ -3,26 +3,64 @@ import { ProductionEfficiencyLoss } from "./ProductionEfficiencyLoss"
 
 export const uteKeysList = ['UTE-1', 'UTE-2', 'UTE-3', 'UTE-4', 'UTE-5'] as const
 
+export const utePattern = /^UTE-[1-5]$/
+
 export type UteKeys = typeof uteKeysList[number]
 
 export interface ProductionEfficiencyRecord {
-  date: Date // Data
-  turn: string // select [1, 2, 3]
-  ute: UteKeys // select ['UTE-1', 'UTE-2', 'UTE-3', 'UTE-4', 'UTE-5']
+  date: Date
+  turn: string
+  ute: UteKeys
   productionTimeInMinutes: number
   piecesQuantity: number
   oeeValue: number
-  productionEfficiencyLosses: ProductionEfficiencyLoss[] // Multiplas respostas com os campos {Calss, descrição]}
+  productionEfficiencyLosses: ProductionEfficiencyLoss[]
+  hourInterval: typeof hourIntervals[number]
   productionProcessId: string
 }
 
+export type CreateEfficiencyRecordRequestDTO = OeeFormType & {
+  date: Date
+  productionTimeInMinutes: number
+  ute: UteKeys
+}
+
+export const hourIntervals = [
+  // 3º turno
+  '01:00-01:59',
+  '02:00-02:59',
+  '03:00-03:59',
+  '04:00-04:59',
+  '05:00-05:59',
+  // 1º turno
+  '06:00-06:59',
+  '07:00-07:59',
+  '08:00-08:59',
+  '09:00-09:59',
+  '10:00-10:59',
+  '11:00-11:59',
+  '12:00-12:59',
+  '13:00-13:59',
+  '14:00-14:59',
+  '15:00-15:48',
+  // 2º turno
+  '15:49-15:59',
+  '16:00-16:59',
+  '17:00-17:59',
+  '18:00-18:59',
+  '19:00-19:59',
+  '20:00-20:59',
+  '21:00-21:59',
+  '22:00-22:59',
+  '23:00-23:59',
+  '00:00-00:59',
+] as const
+
+
 export const oeeFormSchema = z.object({
-  date: z.string().nonempty('Campo obrigatório'),
-  name: z.string().nonempty('Campo obrigatório'),
-  turn: z.string().nonempty('Selecione o turno'),
-  ute: z.string().nonempty('Selecione a UTE'),
+  turn: z.string().nonempty('Selecione o turno'), //X
+  hourInterval: z.enum(hourIntervals, { message: 'Selecione um intervalo de hora' }),
   process: z.string().nonempty('Selecione um processo'),
-  productionTimeInMinutes: z.coerce.number().min(1, 'precisa ser > 0'),
   piecesQuantity: z.coerce.number().min(1, 'precisa ser > 0'),
   reasons: z.array(z.object({
     class: z.string().nonempty('Selecione o grupo'),
@@ -33,4 +71,4 @@ export const oeeFormSchema = z.object({
 
 export type OeeFormType = z.infer<typeof oeeFormSchema>
 
-export type CreateEfficiencyRecordRequestDTO = OeeFormType
+

@@ -12,6 +12,7 @@ export type SuccessData = {
   totalScrap: number
   totalRework: number
   oee: number
+  ute: string
 }
 
 type props = {

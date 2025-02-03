@@ -9,9 +9,7 @@ export function Success(){
   const navigate = useNavigate()
 
   useEffect(() => {
-    if(!state){
-      navigate('/')
-    }
+    if(!state) navigate('/')
   }, [])
 
   return (
@@ -58,7 +56,7 @@ export function Success(){
         </table>
 
         <div className="w-ful flex justify-center items-center mt-4" >
-          <Link to={'/'}>
+          <Link to={'/'+ state.ute}>
             <button className="text-blue-500 underline text-lg" >
               Enviar novo lançamento
             </button>
