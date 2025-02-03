@@ -61,10 +61,12 @@ export class HomeController {
       if (!ute) return
       if (!utePattern.test(ute)) return
       setIsProcesLoad(false)
-      getProcesses(ute).then(data => {
-        setProcesses(data)
-        setIsProcesLoad(true)
-      })
+      getProcesses(ute)
+        .then(data => {
+          setProcesses(data)
+          setIsProcesLoad(true)
+        })
+        .catch(console.log)
     }, [ute])
 
     return {
