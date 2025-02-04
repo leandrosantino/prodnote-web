@@ -22,7 +22,7 @@ const chartData = [
   { category: "Refugo", hours: 9, fill: 'hsl(var(--chart-2))' },
   { category: "RH", hours: 9, fill: 'hsl(var(--chart-2))' },
   { category: "Logística", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "Eficiência Operacinal", hours: 9, fill: 'hsl(var(--chart-2))' },
+  { category: "Eficiência Operacional", hours: 9, fill: 'hsl(var(--chart-2))' },
 ]
 
 const chartConfig = {
@@ -38,7 +38,7 @@ const chartConfig = {
   'Refugo': { label: 'Refugo'},
   'RH': { label: 'RH'},
   'Logística': { label: 'Logística'},
-  'Eficiência Operacinal': { label: 'Eficiência-Operacinal'},
+  'Eficiência Operacional': { label: 'Eficiência-Operacional'},
 } satisfies ChartConfig
 
 export function LossReasonChart() {
@@ -48,7 +48,7 @@ export function LossReasonChart() {
         <CardTitle>Perdas por Classificação</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer className="max-h-[390px] w-full" config={chartConfig}>
+        <ChartContainer className="max-h-[320px] w-full" config={chartConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}

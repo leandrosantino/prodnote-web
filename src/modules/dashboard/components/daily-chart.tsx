@@ -63,7 +63,7 @@ export function DailyChart() {
         <CardTitle>OEE - Evolução Diária</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer className="max-h-[150px] w-full" config={chartConfig}>
+        <ChartContainer className="max-h-[160px] w-full" config={chartConfig}>
           <LineChart
             accessibilityLayer
             data={chartData}

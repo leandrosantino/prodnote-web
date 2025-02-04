@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore/lite';
+import { addDoc, collection, getDocs, getFirestore, orderBy, query, Timestamp, where } from 'firebase/firestore/lite';
 import { ProductionProcess } from "../entities/ProductionProcess";
 import { CreateEfficiencyRecordRequestDTO, ProductionEfficiencyRecord } from "../entities/ProductionEfficiencyRecord";
 import { ClassificationTypes, classificationTypesMap } from "../entities/ProductionEfficiencyLoss";
 import { SuccessData } from "../modules/home/home.view";
+import * as XLSX from 'xlsx';
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1Yx0-iwYzgQryvR0GPHItDjjDV_XIQg4",
@@ -105,4 +106,45 @@ function calculateOEE({ cycleTimeInSeconds, piecesQuantity, productionTimeInMinu
 }) {
   const cycleTimeInMinutes = cycleTimeInSeconds / 60
   return (piecesQuantity * (cycleTimeInMinutes / cavitiesNumber)) / productionTimeInMinutes
+}
+
+export async function getAllProcesses() {
+  const querySnapshot = await getDocs(collection(db, 'process'))
+  return querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
+}
+
+export async function getRecords() {
+  const querySnapshot = await getDocs(query(
+    collection(db, 'productionEfficiencyRecord'),
+    orderBy('date', 'desc')
+  ))
+  let data = querySnapshot.docs.map(doc => doc.data()) as ProductionEfficiencyRecord[]
+  data = data.map(({ date, ...rest }) => ({
+    date: (date as unknown as Timestamp).toDate(),
+    ...rest
+  }))
+  console.log(data)
+  return data
+}
+
+
+export async function exportToExcel(): Promise<void> {
+  const processes = await getAllProcesses()
+  const counts = (await getRecords())
+    .map(count => {
+      return {
+        'Data': count.date.toLocaleDateString(),
+        'Turno': count.turn,
+        'UTE': count.ute,
+        'Hora': count.hourInterval,
+        'Processo': processes.find(item => item.id === count.productionProcessId)?.description ?? '',
+        'Peças Boas': count.piecesQuantity,
+        'OEE-hora': count.oeeValue,
+      }
+    })
+  const worksheet = XLSX.utils.json_to_sheet(counts);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Dados');
+  const fileName = `Relatório de produção.xlsx`
+  XLSX.writeFile(workbook, fileName);
 }

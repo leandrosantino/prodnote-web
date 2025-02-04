@@ -38,7 +38,7 @@ export function TopFiveProcessChart() {
         <CardTitle>Top 5 - menor eficiência</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer className="h-[390px]  w-full" config={chartConfig}>
+        <ChartContainer className="h-[320px]  w-full" config={chartConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}

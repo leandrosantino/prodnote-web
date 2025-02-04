@@ -1,10 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { DashboardController } from "./dashboard.controller"
 import { DataCard } from "./components/data-card.view"
-import { Factory, Repeat2, Target, Trash2 } from "lucide-react"
+import { Download, Factory, Repeat2, Target, Trash2 } from "lucide-react"
 import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
+import { Button } from "@/components/ui/button"
+import { DatePicker } from "./components/date-picker"
 
 
 type props = {
@@ -13,42 +15,49 @@ type props = {
 
 export function DashboardView({ controller }: props) {
   return (
-    <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-4" >
-      <h2 className='text-3xl font-bold' >Dashboard - Lançamento de OEE</h2>
+    <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-2 overflow-auto" >
+      <h2 className='text-3xl font-bold max-md:text-2xl' >Dashboard - Lançamento de OEE</h2>
 
-      <div className="w-full h-12">
-        {/* Filtros */}
-        <Skeleton className="w-full h-full" />
+      <div className="w-full h-12 flex justify-between items-center">
+        <div>
+          <DatePicker />
+        </div>
+        <Button onClick={() => controller.report()}>
+          Baixar Relatório
+          <Download />
+        </Button>
       </div>
 
-      <div className="w-full h-[100px] flex gap-4">
-        <div className="w-1/4 h-full">
+      <div className="w-full grid gap-2 grid-cols-4 max-lg:grid-cols-2 max-sm:grid-cols-1">
+        <div>
           <DataCard label="Produção (pçs)" value="150" Icon={Factory} />
         </div>
-        <div className="w-1/4 h-full">
+        <div>
           <DataCard label="Retrabalho (pçs)" value="12" Icon={Repeat2} />
         </div>
-        <div className="w-1/4 h-full">
+        <div>
           <DataCard label="Refugo" value="3%" Icon={Trash2} />
         </div>
-        <div className="w-1/4 h-full">
+        <div>
           <DataCard label="OEE" value="83%" Icon={Target} />
         </div>
       </div>
 
-      <div className="w-full h-[450px] flex gap-4">
-        <div className="w-1/3 h-full">
+      <div className="w-full grid grid-cols-[33%_auto] grid-rows-[380px] gap-2 max-lg:grid-cols-1">
+        <div className="">
           <TopFiveProcessChart />
         </div>
-        <div className="w-2/3 h-full">
+        <div className="">
           <LossReasonChart />
         </div>
       </div>
 
-      <div className="w-full h-[250px]" >
-        {/* Diário */}
-        <DailyChart />
-      </div>
+
+        <div className="w-full h-[250px]" >
+          {/* Diário */}
+          <DailyChart />
+        </div>
+
 
     </div>
   )
