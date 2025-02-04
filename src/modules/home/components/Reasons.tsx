@@ -1,9 +1,9 @@
 import { Trash2 } from "lucide-react";
 import { Select } from "./Select";
-import { classificationTypesMap } from "../entities/ProductionEfficiencyLoss";
+import { classificationTypesMap } from "../../../entities/ProductionEfficiencyLoss";
 import { Input } from "./Input";
 import { useFormContext } from "react-hook-form";
-import { OeeFormType } from "../entities/ProductionEfficiencyRecord";
+import { OeeFormType } from "../../../entities/ProductionEfficiencyRecord";
 import { useEffect, useState } from "react";
 
 
@@ -21,7 +21,7 @@ export function Reasons({index, onRemove}: {index: number, onRemove: () => void 
       setTimeLabel('Peças:')
       return
     }
-    setTimeLabel('Tempo:')
+    setTimeLabel('Tempo (min):')
   }, [watch(`reasons.${index}.class`)])
 
 

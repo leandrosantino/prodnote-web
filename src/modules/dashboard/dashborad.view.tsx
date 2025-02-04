@@ -1,7 +1,6 @@
-import { Skeleton } from "@/components/ui/skeleton"
 import { DashboardController } from "./dashboard.controller"
 import { DataCard } from "./components/data-card.view"
-import { Download, Factory, Repeat2, Target, Trash2 } from "lucide-react"
+import { Download, Factory, Repeat2, Table, Target, Trash2 } from "lucide-react"
 import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
@@ -22,10 +21,10 @@ export function DashboardView({ controller }: props) {
         <div>
           <DatePicker />
         </div>
-        <Button onClick={() => controller.report()}>
-          Baixar Relatório
-          <Download />
-        </Button>
+        <div className="flex gap-2" >
+          <Button onClick={() => controller.goToTablePage() } variant='outline'> Dados <Table /> </Button>
+          <Button onClick={() => controller.report()}> Relatório <Download /> </Button>
+        </div>
       </div>
 
       <div className="w-full grid gap-2 grid-cols-4 max-lg:grid-cols-2 max-sm:grid-cols-1">

@@ -114,22 +114,23 @@ export async function getAllProcesses() {
 }
 
 export async function getRecords() {
+  const processes = await getAllProcesses()
   const querySnapshot = await getDocs(query(
     collection(db, 'productionEfficiencyRecord'),
     orderBy('date', 'desc')
   ))
   let data = querySnapshot.docs.map(doc => doc.data()) as ProductionEfficiencyRecord[]
-  data = data.map(({ date, ...rest }) => ({
+  data = data.map(({ date, productionProcessId, ...rest }) => ({
     date: (date as unknown as Timestamp).toDate(),
+    productionProcessId: processes.find(item => item.id === productionProcessId)?.description ?? '',
     ...rest
   }))
-  console.log(data)
   return data
 }
 
 
 export async function exportToExcel(): Promise<void> {
-  const processes = await getAllProcesses()
+
   const counts = (await getRecords())
     .map(count => {
       return {
@@ -137,7 +138,7 @@ export async function exportToExcel(): Promise<void> {
         'Turno': count.turn,
         'UTE': count.ute,
         'Hora': count.hourInterval,
-        'Processo': processes.find(item => item.id === count.productionProcessId)?.description ?? '',
+        'Processo': count.productionProcessId,
         'Peças Boas': count.piecesQuantity,
         'OEE-hora': count.oeeValue,
       }

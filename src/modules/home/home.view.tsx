@@ -1,8 +1,8 @@
-import { Button } from '../../components/Button';
+import { Button } from './components/Button';
 import { FormProvider} from 'react-hook-form';
-import { Input } from '../../components/Input';
-import { Select } from '../../components/Select';
-import { Reasons } from '../../components/Reasons';
+import { Input } from './components/Input';
+import { Select } from './components/Select';
+import { Reasons } from './components/Reasons';
 import { HomeController } from './home.controller';
 
 export type SuccessData = {

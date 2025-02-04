@@ -17,7 +17,7 @@ export const classificationTypesMap = {
   'Refugo': 'Scrap + Quality Issues',
   'RH': 'Organizational Issues',
   'Logística': 'Organizational Issues',
-  'Eficiência Operacinal': 'Organizational Issues',
+  'Eficiência Operacional': 'Organizational Issues',
 } as const
 
 export type ClassificationTypes = keyof typeof classificationTypesMap
