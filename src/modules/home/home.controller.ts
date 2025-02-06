@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { hourIntervals, oeeFormSchema, OeeFormType, UteKeys, utePattern } from "../../entities/ProductionEfficiencyRecord";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ProductionProcess } from "../../entities/ProductionProcess";
@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { createEfficiencyRecord, getProcesses } from "../../repositories";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStateObject } from "../../lib/useStateObject";
+import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
 
 @injectable()
 export class HomeController {
@@ -26,9 +27,11 @@ export class HomeController {
   public processLoad = useStateObject(false)
 
   private navigate = useNavigate()
-  private routeParams = useParams()
+  private routeParams = useParams<{ ute: UteKeys }>()
 
-  constructor() {
+  constructor(
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
+  ) {
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
   }
@@ -49,7 +52,7 @@ export class HomeController {
     if (!this.routeParams.ute) return
     if (!utePattern.test(this.routeParams.ute)) return
     this.processLoad.set(false)
-    getProcesses(this.routeParams.ute)
+    this.productionProcessRepository.findByUte(this.routeParams.ute)
       .then(data => {
         this.processes.set(data)
         this.processLoad.set(true)
