@@ -3,26 +3,17 @@ import { FormProvider} from 'react-hook-form';
 import { Input } from './components/Input';
 import { Select } from './components/Select';
 import { Reasons } from './components/Reasons';
-import { HomeController } from './home.controller';
-
-export type SuccessData = {
-  processName: string
-  piecesQuantity: number
-  totalReasonsTime: number
-  totalScrap: number
-  totalRework: number
-  oee: number
-  ute: string
-}
+import { FormController } from './form.controller';
+import { Container } from './components/Container';
 
 type props = {
-  controller: HomeController
+  controller: FormController
 }
 
-export function HomeView({ controller }: props) {
+export function FromView({ controller }: props) {
 
   return (
-    <div className="max-w-2xl mx-auto p-4 pb-24 bg-white shadow-lg rounded-md max-md:h-full" >
+    <Container loading={controller.processLoad.value} >
       <h2 className='text-3xl font-bold mb-8' >Lançamento de OEE</h2>
 
       <FormProvider {...controller.form} >
@@ -34,7 +25,7 @@ export function HomeView({ controller }: props) {
           <Select name='turn' label='Turno' options={['1', '2', '3'].map(val => ({value: val, label: val}))} />
           <Select name='hourInterval' label='Hora' options={controller.intervals.value.map(val => ({value: val, label: val}))} />
 
-          <Select name='process' label='Processo de produção' loading={!controller.processLoad.value} options={
+          <Select name='process' label='Processo de produção' loading={controller.processLoad.value} options={
             controller.processes.value.map(val => ({value: val.id ?? '', label: val.description }))
           } />
 
@@ -55,6 +46,6 @@ export function HomeView({ controller }: props) {
 
         </form>
       </FormProvider>
-    </div>
+    </Container>
   );
 }

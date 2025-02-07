@@ -1,4 +1,4 @@
-import { ProductionEfficiencyRecord } from "@/entities/ProductionEfficiencyRecord";
+import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const columnsViewNames = {
@@ -10,7 +10,7 @@ export const columnsViewNames = {
   'amount' :'Quantidade',
 }
 
-export const tableColumns: ColumnDef<ProductionEfficiencyRecord>[] = [
+export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
   {
     accessorKey: "date",
     header: () => <div className='w-32' >Data</div>,

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { ProductionEfficiencyLoss } from "./ProductionEfficiencyLoss"
+import { EfficiencyLoss } from "./EfficiencyLoss"
 
 export const uteKeysList = ['UTE-1', 'UTE-2', 'UTE-3', 'UTE-4', 'UTE-5'] as const
 
@@ -7,22 +7,16 @@ export const utePattern = /^UTE-[1-5]$/
 
 export type UteKeys = typeof uteKeysList[number]
 
-export interface ProductionEfficiencyRecord {
+export interface EfficiencyRecord {
   date: Date
   turn: string
   ute: UteKeys
   productionTimeInMinutes: number
   piecesQuantity: number
   oeeValue: number
-  productionEfficiencyLosses: ProductionEfficiencyLoss[]
+  productionEfficiencyLosses: EfficiencyLoss[]
   hourInterval: typeof hourIntervals[number]
   productionProcessId: string
-}
-
-export type CreateEfficiencyRecordRequestDTO = OeeFormType & {
-  date: Date
-  productionTimeInMinutes: number
-  ute: UteKeys
 }
 
 export const hourIntervals = [
@@ -61,7 +55,7 @@ export const oeeFormSchema = z.object({
   turn: z.string().nonempty('Selecione o turno'), //X
   hourInterval: z.enum(hourIntervals, { message: 'Selecione um intervalo de hora' }),
   process: z.string().nonempty('Selecione um processo'),
-  piecesQuantity: z.coerce.number().min(1, 'precisa ser > 0'),
+  piecesQuantity: z.coerce.number().min(0, 'precisa ser >= 0'),
   reasons: z.array(z.object({
     class: z.string().nonempty('Selecione o grupo'),
     description: z.string().nonempty('Descreva o motivo da perda'),

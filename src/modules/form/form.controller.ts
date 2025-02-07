@@ -1,16 +1,18 @@
 import { inject, injectable } from "tsyringe";
-import { hourIntervals, oeeFormSchema, OeeFormType, UteKeys, utePattern } from "../../entities/ProductionEfficiencyRecord";
-import { useFieldArray, useForm } from "react-hook-form";
-import { ProductionProcess } from "../../entities/ProductionProcess";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { createEfficiencyRecord, getProcesses } from "../../repositories";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { useStateObject } from "../../lib/useStateObject";
+
+import { hourIntervals, oeeFormSchema, OeeFormType, UteKeys, utePattern } from "@/entities/EfficiencyRecord";
+import { ProductionProcess } from "@/entities/ProductionProcess";
+import { useStateObject } from "@/lib/useStateObject";
+
 import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
+import type { IEfficiencyRecordService } from "@/services/efficiency-record/IEfficiencyRecordService";
 
 @injectable()
-export class HomeController {
+export class FormController {
 
   public form = useForm<OeeFormType>({
     resolver: zodResolver(oeeFormSchema),
@@ -30,7 +32,8 @@ export class HomeController {
   private routeParams = useParams<{ ute: UteKeys }>()
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository,
+    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: IEfficiencyRecordService
   ) {
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
@@ -49,13 +52,13 @@ export class HomeController {
   }
 
   private getProcessesByUte() {
+    this.processLoad.set(true)
     if (!this.routeParams.ute) return
     if (!utePattern.test(this.routeParams.ute)) return
-    this.processLoad.set(false)
-    this.productionProcessRepository.findByUte(this.routeParams.ute)
+    this.productionProcessRepository.getByUte(this.routeParams.ute)
       .then(data => {
         this.processes.set(data)
-        this.processLoad.set(true)
+        this.processLoad.set(false)
       })
       .catch(console.log)
   }
@@ -70,7 +73,7 @@ export class HomeController {
       return
     }
 
-    createEfficiencyRecord({
+    this.efficiencyRecordService.createRecord({
       ...data,
       ute: this.routeParams.ute as UteKeys,
       productionTimeInMinutes: 60,
@@ -82,7 +85,6 @@ export class HomeController {
       .catch(e => console.log((e as Error)))
       .finally(() => { this.loading.set(false) })
   }
-
 
   addNewReason() {
     this.reasonsField.append({ class: '', description: '', time: 0 })

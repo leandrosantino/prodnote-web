@@ -1,6 +1,6 @@
 import { CircleCheckBig } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { SuccessData } from "./home/home.view"
+import { SuccessData } from "./home/form.view"
 import { useEffect } from "react"
 
 export function Success(){

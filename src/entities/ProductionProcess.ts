@@ -1,4 +1,4 @@
-import { UteKeys } from "./ProductionEfficiencyRecord"
+import { UteKeys } from "./EfficiencyRecord"
 
 export interface ProductionProcess {
   id: string

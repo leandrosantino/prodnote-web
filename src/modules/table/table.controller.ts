@@ -1,19 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { useStateObject } from "@/lib/useStateObject";
 import { tableColumns } from "./table-columns";
-import { ProductionEfficiencyRecord } from "@/entities/ProductionEfficiencyRecord";
+import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { useEffect } from "react";
-import { getRecords } from "@/repositories";
+import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
 
 @injectable()
 export class TableController {
-  private navigate = useNavigate()
 
+  private navigate = useNavigate()
   private sorting = useStateObject<SortingState>([])
   private columnFilters = useStateObject<ColumnFiltersState>([])
-  private data = useStateObject<ProductionEfficiencyRecord[]>([])
+  private data = useStateObject<EfficiencyRecord[]>([])
+
   public columns = tableColumns
   public loading = useStateObject(false)
 
@@ -32,8 +33,9 @@ export class TableController {
     },
   })
 
-
-  constructor() {
+  constructor(
+    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: IEfficiencyRecordRepository
+  ) {
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])
     useEffect(() => { this.loadData() }, [])
   }
@@ -41,7 +43,7 @@ export class TableController {
   private async loadData() {
     this.loading.set(true)
     try {
-      const newData = await getRecords();
+      const newData = await this.efficiencyRecordRepository.getAll();
       this.data.set(newData);
       this.loading.set(false)
     } catch (error) {

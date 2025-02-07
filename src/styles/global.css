@@ -4,11 +4,11 @@
 
 
 @layer base {
-  body {
+  body, #root {
     @apply bg-zinc-200 h-screen
   }
   #root {
-    @apply bg-zinc-200 h-screen md:p-4
+    @apply md:p-4 overflow-auto
   }
   :root {
 
@@ -160,15 +160,5 @@
 
 
     --chart-5: 340 75% 55%
-  }
-}
-
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }

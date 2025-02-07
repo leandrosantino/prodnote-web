@@ -1,9 +1,9 @@
 import { Trash2 } from "lucide-react";
 import { Select } from "./Select";
-import { classificationTypesMap } from "../../../entities/ProductionEfficiencyLoss";
+import { classificationTypesMap } from "../../../entities/EfficiencyLoss";
 import { Input } from "./Input";
 import { useFormContext } from "react-hook-form";
-import { OeeFormType } from "../../../entities/ProductionEfficiencyRecord";
+import { OeeFormType } from "../../../entities/EfficiencyRecord";
 import { useEffect, useState } from "react";
 
 
