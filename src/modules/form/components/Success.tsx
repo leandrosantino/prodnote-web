@@ -1,11 +1,11 @@
 import { CircleCheckBig } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { SuccessData } from "./home/form.view"
 import { useEffect } from "react"
+import { CreateEfficiencyRecordResponseDTO } from "@/services/efficiency-record/IEfficiencyRecordService"
 
 export function Success(){
 
-  const {state} = useLocation() as {state: SuccessData}
+  const {state} = useLocation() as {state: CreateEfficiencyRecordResponseDTO}
   const navigate = useNavigate()
 
   useEffect(() => {
