@@ -43,8 +43,7 @@ export class TableController {
   private async loadData() {
     this.loading.set(true)
     try {
-      const newData = await this.efficiencyRecordRepository.getAll();
-      this.data.set(newData);
+      this.data.set(await this.efficiencyRecordRepository.getAll());
       this.loading.set(false)
     } catch (error) {
       console.error("Erro ao carregar dados:", error);

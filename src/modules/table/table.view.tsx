@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { flexRender } from "@tanstack/react-table"
 import { Loading } from "@/components/Loading"
+import { LossesReasonDialog } from "./components/LossesReasonDialog"
 
 type props = {
   controller: TableController
@@ -40,20 +41,21 @@ export function TableView({ controller }: props){
 
           {controller.table.getRowModel().rows?.length? (
             controller.table.getRowModel().rows.map((row) => (
-              <TableRow
-                className='hover:bg-muted/50'
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell className='text-center' key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
+              <LossesReasonDialog key={row.id} efficiencyRecord={row.original} >
+                <TableRow
+                  className='hover:bg-muted/50 cursor-pointer'
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell className='text-center' key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </LossesReasonDialog>
             ))
           ) : (
             <tr>
