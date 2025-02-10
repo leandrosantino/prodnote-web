@@ -30,6 +30,7 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       .map(item => ({
         classification: classificationTypesMap[item.class as ClassificationTypes],
         description: item.description,
+        cause: item.class,
         lostTimeInMinutes: item.time
       }))
 

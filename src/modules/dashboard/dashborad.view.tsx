@@ -1,11 +1,11 @@
 import { DashboardController } from "./dashboard.controller"
-import { DataCard } from "./components/data-card.view"
+import { DataCard } from "./components/data-card"
 import { Download, Factory, Repeat2, Table, Target, Trash2 } from "lucide-react"
 import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
 import { Button } from "@/components/ui/button"
-import { DatePicker } from "./components/date-picker"
+import { DateRangePicker } from "./components/date-range-picker"
 
 
 type props = {
@@ -19,7 +19,7 @@ export function DashboardView({ controller }: props) {
 
       <div className="w-full h-12 flex justify-between items-center">
         <div>
-          <DatePicker />
+          <DateRangePicker />
         </div>
         <div className="flex gap-2" >
           <Button onClick={() => controller.goToTablePage() } variant='outline'> Dados <Table /> </Button>

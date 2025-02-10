@@ -1,20 +1,17 @@
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const columnsViewNames = {
-  'created_time' :'Data/Hora',
-  'display_name' :'Usuário',
-  'registration' :'Matrícula',
-  'seq' :'Serial',
-  'count' :'Seq',
-  'amount' :'Quantidade',
-}
-
 export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
   {
     accessorKey: "date",
     header: () => <div className='w-32' >Data</div>,
-    cell: ({row}) => <div className='w-32'>{(row.getValue('date') as Date).toLocaleDateString()}</div>
+    cell: ({row}) => <div className='w-32'>{(row.getValue('date') as Date).toLocaleDateString()}</div>,
+    filterFn: (row, columnId, filterValue) =>{
+      const rowValue = row.getValue(columnId) as Date;
+      const dataLinha = new Date(rowValue);
+      const dataFiltro = new Date(filterValue);
+      return dataLinha.toDateString() === dataFiltro.toDateString();
+    }
   },
   {
     accessorKey: "turn",

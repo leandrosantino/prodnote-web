@@ -11,19 +11,22 @@ export const classificationTypesMap = {
   'Ajsute de Parâmetro': 'Shift Setup',
   'Setup': 'Change-Over + SMED',
   'Máquina quebrada': 'Breakdowns',
-  'Manutenção programada/preventiva': 'Maintenance',
-  'Organização/Limpeza/Refeição': 'Organizational Issues',
+  'Manutenção programada': 'Maintenance',
+  'Organização/Limpeza': 'Organizational Issues',
+  'Troca de material': 'Organizational Issues',
+  'Refeição': 'Organizational Issues',
   'Retrabalho': 'Scrap + Quality Issues',
   'Refugo': 'Scrap + Quality Issues',
   'RH': 'Organizational Issues',
   'Logística': 'Organizational Issues',
-  'Eficiência Operacional': 'Organizational Issues',
+  'Operacional': 'Organizational Issues',
 } as const
 
 export type ClassificationTypes = keyof typeof classificationTypesMap
 
 export interface EfficiencyLoss {
   classification: string
+  cause: string
   description: string
   lostTimeInMinutes: number
 }

@@ -32,7 +32,7 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
             efficiencyRecord.productionEfficiencyLosses.map((item, index) => (
               <Card key={index} >
                 <CardHeader>
-                  <CardTitle>{item.classification}</CardTitle>
+                  <CardTitle>{item.cause ?? item.classification}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p>{item.description}</p>
