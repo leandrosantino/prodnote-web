@@ -5,5 +5,5 @@ export interface ProductionProcess {
   description: string
   cycleTimeInSeconds: number
   cavitiesNumber: number
-  ute: UteKeys
+  area: UteKeys
 }

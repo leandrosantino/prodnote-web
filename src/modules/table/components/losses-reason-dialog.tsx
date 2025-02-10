@@ -20,29 +20,29 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
         <DialogHeader>
           <DialogTitle>Perdas de Eficiência</DialogTitle>
           <DialogDescription>
-            {efficiencyRecord.date.toLocaleDateString()} - {efficiencyRecord.hourInterval} - {efficiencyRecord.productionProcessId}
+            {new Date(efficiencyRecord.date).toLocaleDateString()} - {efficiencyRecord.hourInterval} - {efficiencyRecord.process.description}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 overflow-auto max-h-[300px]">
           {
-            efficiencyRecord.productionEfficiencyLosses.length === 0 ?
+            (efficiencyRecord?.productionEfficiencyLosses?.length ?? 0) === 0 ?
             <>
               <span className="text-muted-foreground w-full h-[200px] flex justify-center items-center" >Nenhuma perda apontada...</span>
             </> :
-            efficiencyRecord.productionEfficiencyLosses.map((item, index) => (
-              <Card key={index} >
-                <CardHeader>
-                  <CardTitle>{item.cause ?? item.classification}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{item.description}</p>
-                  <p>
-                    {item.classification === 'Scrap + Quality Issues' ? 'Peças: ' : 'Tempo (min): '}
-                    {item.lostTimeInMinutes}
-                  </p>
-                </CardContent>
-              </Card>
-            ))
+            efficiencyRecord.productionEfficiencyLosses.map(({efficiencyLoss: item}, index) => (
+                <Card key={index} >
+                  <CardHeader>
+                    <CardTitle>{item.cause ?? item.classification}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{item.description}</p>
+                    <p>
+                      {item.classification === 'Scrap + Quality Issues' ? 'Peças: ' : 'Tempo (min): '}
+                      {item.lostTimeInMinutes}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))
           }
         </div>
       </DialogContent>

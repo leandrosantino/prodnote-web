@@ -25,6 +25,7 @@ export const classificationTypesMap = {
 export type ClassificationTypes = keyof typeof classificationTypesMap
 
 export interface EfficiencyLoss {
+  id: number
   classification: string
   cause: string
   description: string

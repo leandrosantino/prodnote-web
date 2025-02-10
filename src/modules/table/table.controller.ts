@@ -60,7 +60,7 @@ export class TableController {
     useEffect(() => { this.onChangeTableTurnFilter() }, [this.table.getColumn('turn')?.getFilterValue()])
 
     useEffect(() => { this.onChangeProcessFilter() }, [this.processFilter.value])
-    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('productionProcessId')?.getFilterValue()])
+    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('process')?.getFilterValue()])
   }
 
   private onChangeDateFilter() {
@@ -85,10 +85,10 @@ export class TableController {
   }
 
   private onChangeProcessFilter() {
-    this.table.getColumn('productionProcessId')?.setFilterValue(this.processFilter.value)
+    this.table.getColumn('process')?.setFilterValue(this.processFilter.value)
   }
   private onChangeTableProcessFilter() {
-    this.processFilter.set(this.table.getColumn('productionProcessId')?.getFilterValue() as string)
+    this.processFilter.set(this.table.getColumn('process')?.getFilterValue() as string)
   }
 
   private async loadData() {

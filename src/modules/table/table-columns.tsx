@@ -1,11 +1,12 @@
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { ProductionProcess } from "@/entities/ProductionProcess";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
   {
     accessorKey: "date",
     header: () => <div className='w-32' >Data</div>,
-    cell: ({row}) => <div className='w-32'>{(row.getValue('date') as Date).toLocaleDateString()}</div>,
+    cell: ({row}) => <div className='w-32'>{new Date(row.getValue('date')).toLocaleDateString()}</div>,
     filterFn: (row, columnId, filterValue) =>{
       const rowValue = row.getValue(columnId) as Date;
       const dataLinha = new Date(rowValue);
@@ -21,7 +22,7 @@ export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
   {
     accessorKey: "ute",
     header: () => <div className='min-w-20' >UTE</div>,
-    cell: ({row}) => <div className='min-w-20'>{row.getValue('ute')}</div>
+    cell: ({row}) => <div className='min-w-20'>{row.original.process.area}</div>
   },
   {
     accessorKey: "hourInterval",
@@ -29,9 +30,13 @@ export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
     cell: ({row}) => <div className='min-w-32'>{row.getValue('hourInterval')}</div>
   },
   {
-    accessorKey: "productionProcessId",
+    accessorKey: "process",
     header: () => <div className='w-56' >Processo</div>,
-    cell: ({row}) => <div className='w-56'>{row.getValue('productionProcessId')}</div>
+    cell: ({row}) => <div className='w-56'>{(row.getValue('process') as ProductionProcess).description}</div>,
+    filterFn: (row, columnId, filterValue) =>{
+      const process = row.getValue(columnId) as ProductionProcess;
+      return process.description === filterValue
+    }
   },
   {
     accessorKey: "piecesQuantity",

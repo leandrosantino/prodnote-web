@@ -2,10 +2,10 @@ import { inject, singleton } from "tsyringe";
 import * as XLSX from 'xlsx';
 
 import { CreateEfficiencyRecordRequestDTO, CreateEfficiencyRecordResponseDTO, IEfficiencyRecordService } from "./IEfficiencyRecordService";
-import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
-import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
 import { classificationTypesMap, ClassificationTypes } from "@/entities/EfficiencyLoss";
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import type { CreateEfficiencyRecordRepositoryDTO, IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
+import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
+
 
 @singleton()
 export class EfficiencyRecordService implements IEfficiencyRecordService {
@@ -26,7 +26,7 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       productionTimeInMinutes: efficiencyRecordData.productionTimeInMinutes
     })
 
-    const productionEfficiencyLosses: EfficiencyRecord['productionEfficiencyLosses'] = efficiencyRecordData.reasons
+    const productionEfficiencyLosses: CreateEfficiencyRecordRepositoryDTO['efficiencyLosses'] = efficiencyRecordData.reasons
       .map(item => ({
         classification: classificationTypesMap[item.class as ClassificationTypes],
         description: item.description,
@@ -49,19 +49,20 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       .reduce((acc, val) => acc + val, 0)
 
 
-    const productionEfficiencyRecord: EfficiencyRecord = {
+    const productionEfficiencyRecord: CreateEfficiencyRecordRepositoryDTO['data'] = {
       date: new Date(efficiencyRecordData.date),
       oeeValue,
-      productionEfficiencyLosses,
       piecesQuantity: efficiencyRecordData.piecesQuantity,
-      productionProcessId: productionProcess.id,
       productionTimeInMinutes: efficiencyRecordData.productionTimeInMinutes,
       turn: efficiencyRecordData.turn,
-      ute: efficiencyRecordData.ute as EfficiencyRecord['ute'],
-      hourInterval: efficiencyRecordData.hourInterval
+      processId: Number(efficiencyRecordData.process),
+      hourInterval: efficiencyRecordData.hourInterval,
     }
 
-    await this.efficiencyRecordRepository.create(productionEfficiencyRecord)
+    await this.efficiencyRecordRepository.create({
+      data: productionEfficiencyRecord,
+      efficiencyLosses: productionEfficiencyLosses
+    })
 
     return {
       oee: oeeValue,
@@ -90,9 +91,9 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
         return {
           'Data': count.date.toLocaleDateString(),
           'Turno': count.turn,
-          'UTE': count.ute,
+          'UTE': count.process.area,
           'Hora': count.hourInterval,
-          'Processo': count.productionProcessId,
+          'Processo': count.process.description,
           'Peças Boas': count.piecesQuantity,
           'OEE-hora': count.oeeValue,
         }

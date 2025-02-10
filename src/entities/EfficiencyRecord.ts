@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { EfficiencyLoss } from "./EfficiencyLoss"
+import { ProductionProcess } from "./ProductionProcess"
 
 export const uteKeysList = ['UTE-1', 'UTE-2', 'UTE-3', 'UTE-4', 'UTE-5'] as const
 
@@ -10,13 +11,13 @@ export type UteKeys = typeof uteKeysList[number]
 export interface EfficiencyRecord {
   date: Date
   turn: string
-  ute: UteKeys
   productionTimeInMinutes: number
   piecesQuantity: number
   oeeValue: number
-  productionEfficiencyLosses: EfficiencyLoss[]
+  productionEfficiencyLosses: { efficiencyLoss: EfficiencyLoss }[]
   hourInterval: typeof hourIntervals[number]
-  productionProcessId: string
+  processId: number
+  process: Pick<ProductionProcess, 'description' | 'area'>
 }
 
 export const hourIntervals = [
