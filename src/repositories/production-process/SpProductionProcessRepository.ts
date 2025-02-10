@@ -30,7 +30,6 @@ export class SpProductionProcessRepository implements IProductionProcessReposito
 
   async getAll(): Promise<ProductionProcess[]> {
     const { data, error } = await supabase.from('process').select<"*", ProductionProcess>("*")
-    console.log(data, error)
     if (error) throw new Error(error.message)
     return data
   }
