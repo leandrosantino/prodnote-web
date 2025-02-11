@@ -3,6 +3,7 @@ import { ProductionProcessRepository } from "./repositories/production-process/P
 import { EfficiencyRecordRepository } from "./repositories/efficiency-record/EfficiencyRecordRepository";
 import { EfficiencyRecordService } from "./services/efficiency-record/EfficiencyRecordService";
 import { ListEfficiencyRecordCached } from "./warpers/ListEfficiencyRecordCached";
+import { ReportService } from "./services/report-service/ReportService";
 
 
 container.registerSingleton('ProductionProcessRepository', ProductionProcessRepository)
@@ -10,3 +11,4 @@ container.registerSingleton('EfficiencyRecordRepository', EfficiencyRecordReposi
 container.registerSingleton('EfficiencyRecordService', EfficiencyRecordService)
 
 container.registerSingleton('ListEfficiencyRecordCached', ListEfficiencyRecordCached)
+container.registerSingleton('ReportService', ReportService)

@@ -29,16 +29,16 @@ export function DashboardView({ controller }: props) {
 
       <div className="w-full grid gap-2 grid-cols-4 max-lg:grid-cols-2 max-sm:grid-cols-1">
         <div>
-          <DataCard label="Produção (pçs)" value="150" Icon={Factory} />
+          <DataCard label="Produção (pçs)" value={controller.totalOfProduction.value} Icon={Factory} />
         </div>
         <div>
-          <DataCard label="Retrabalho (pçs)" value="12" Icon={Repeat2} />
+          <DataCard label="Retrabalho (pçs)" value={controller.totalOfRework.value} Icon={Repeat2} />
         </div>
         <div>
-          <DataCard label="Refugo" value="3%" Icon={Trash2} />
+          <DataCard label="Refugo" value={controller.totalOfScrap.value} Icon={Trash2} />
         </div>
         <div>
-          <DataCard label="OEE" value="83%" Icon={Target} />
+          <DataCard label="OEE" value={controller.oeeValue.value} Icon={Target} />
         </div>
       </div>
 
