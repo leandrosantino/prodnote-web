@@ -7,7 +7,6 @@ export interface IEfficiencyRecordService {
 
 export type CreateEfficiencyRecordRequestDTO = OeeFormType & {
   date: Date
-  productionTimeInMinutes: number
   ute: UteKeys
 }
 

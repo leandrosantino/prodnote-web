@@ -76,7 +76,6 @@ export class FormController {
     this.efficiencyRecordService.createRecord({
       ...data,
       ute: this.routeParams.ute as UteKeys,
-      productionTimeInMinutes: 60,
       date: new Date(),
     })
       .then(resp => {

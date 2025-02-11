@@ -19,12 +19,19 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
     const productionProcess = await this.productionProcessRepository.getById(efficiencyRecordData.process)
     if (!productionProcess) { throw new Error('Process not found') };
 
+    let productionTimeInMinutes = 60
+
+    if (efficiencyRecordData.hourInterval === '15:00-15:48') productionTimeInMinutes = 48
+    if (efficiencyRecordData.hourInterval === '15:49-15:59') productionTimeInMinutes = 10
+
     const oeeValue = this.calculateOEE({
       cavitiesNumber: productionProcess.cavitiesNumber,
       cycleTimeInSeconds: productionProcess.cycleTimeInSeconds,
       piecesQuantity: efficiencyRecordData.piecesQuantity,
-      productionTimeInMinutes: efficiencyRecordData.productionTimeInMinutes
+      productionTimeInMinutes: productionTimeInMinutes
     })
+
+    const cycleTimeInMinutes = productionProcess.cycleTimeInSeconds / 60
 
     const productionEfficiencyLosses: EfficiencyRecord['productionEfficiencyLosses'] = efficiencyRecordData.reasons
       .map(item => ({
@@ -36,18 +43,20 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
 
     const totalRework = efficiencyRecordData.reasons
       .filter(item => item.class === 'Retrabalho')
-      .map(({ time }) => time)
+      .map(({ time: parts }) => parts * cycleTimeInMinutes)
       .reduce((acc, val) => acc + val, 0)
 
     const totalScrap = efficiencyRecordData.reasons
       .filter(item => item.class === 'Refugo')
-      .map(({ time }) => time)
+      .map(({ time: parts }) => parts * cycleTimeInMinutes)
       .reduce((acc, val) => acc + val, 0)
 
     const totalReasonsTime = efficiencyRecordData.reasons
+      .filter(item => item.class !== 'Retrabalho' && item.class !== 'Refugo')
       .map(({ time }) => time)
       .reduce((acc, val) => acc + val, 0)
-
+      + totalRework
+      + totalScrap
 
     const productionEfficiencyRecord: EfficiencyRecord = {
       date: new Date(efficiencyRecordData.date),
@@ -55,7 +64,7 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       productionEfficiencyLosses,
       piecesQuantity: efficiencyRecordData.piecesQuantity,
       productionProcessId: productionProcess.id,
-      productionTimeInMinutes: efficiencyRecordData.productionTimeInMinutes,
+      productionTimeInMinutes: productionTimeInMinutes,
       turn: efficiencyRecordData.turn,
       ute: efficiencyRecordData.ute as EfficiencyRecord['ute'],
       hourInterval: efficiencyRecordData.hourInterval
@@ -68,8 +77,8 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       piecesQuantity: efficiencyRecordData.piecesQuantity,
       processName: productionProcess.description,
       totalReasonsTime,
-      totalRework,
-      totalScrap,
+      totalRework: totalRework / cycleTimeInMinutes,
+      totalScrap: totalScrap / cycleTimeInMinutes,
       ute: efficiencyRecordData.ute
     }
   }

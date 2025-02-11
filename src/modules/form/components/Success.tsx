@@ -38,7 +38,7 @@ export function Success(){
             </tr>
             <tr>
               <td className="border px-4 py-2">Tempo perdido</td>
-              <td className="border px-4 py-2">{state?.totalReasonsTime} min</td>
+              <td className="border px-4 py-2">{state?.totalReasonsTime.toFixed(0)} min</td>
             </tr>
             <tr>
               <td className="border px-4 py-2">Peças refugadas</td>

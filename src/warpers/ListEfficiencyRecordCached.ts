@@ -12,9 +12,7 @@ export class ListEfficiencyRecordCached {
 
   constructor(
     @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: IEfficiencyRecordRepository,
-  ) {
-    this.efficiencyRecordRepository.onCreate(this.onCreate.bind(this))
-  }
+  ) { }
 
   storageKey = 'efficiencyRecords'
   revalidateInterval = 2
@@ -45,13 +43,15 @@ export class ListEfficiencyRecordCached {
     return cachedData.data
   }
 
-  private onCreate(data: EfficiencyRecord) {
-    const cachedData = this.getCachedData()
-    if (cachedData) {
-      cachedData.data = [data, ...cachedData.data]
-      console.log('added', cachedData.data.length)
-      this.revalidate(cachedData.data)
-    }
+  onCreate() {
+    return this.efficiencyRecordRepository.onCreate(data => {
+      const cachedData = this.getCachedData()
+      if (cachedData) {
+        cachedData.data = [data, ...cachedData.data]
+        console.log('added', cachedData.data.length)
+        this.revalidate(cachedData.data)
+      }
+    })
   }
 
   private async revalidate(data: EfficiencyRecord[]) {
