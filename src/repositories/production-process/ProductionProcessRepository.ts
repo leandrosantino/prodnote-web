@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 import { IProductionProcessRepository } from "./IProductionProcessRepository";
 import { ProductionProcess } from "@/entities/ProductionProcess";
-import { getDocs, query, collection, where, orderBy } from "firebase/firestore/lite";
+import { getDocs, query, collection, where, orderBy } from "firebase/firestore";
 import { db } from "../database";
 
 @singleton()
@@ -25,7 +25,10 @@ export class ProductionProcessRepository implements IProductionProcessRepository
 
   async getAll(): Promise<ProductionProcess[]> {
     if (this.cacheProcesses.length === 0) {
-      const querySnapshot = await getDocs(collection(db, 'process'))
+      const querySnapshot = await getDocs(query(
+        collection(db, 'process'),
+        orderBy('id', 'asc')
+      ))
       this.cacheProcesses = querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
     }
     return this.cacheProcesses

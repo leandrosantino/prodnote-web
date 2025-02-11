@@ -5,8 +5,8 @@ import { useStateObject } from "@/lib/useStateObject";
 import { tableColumns } from "./table-columns";
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { useEffect } from "react";
-import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
 import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
+import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 
 @injectable()
 export class TableController {
@@ -44,7 +44,7 @@ export class TableController {
   })
 
   constructor(
-    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: IEfficiencyRecordRepository,
+    @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
     @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
   ) {
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])
@@ -61,6 +61,7 @@ export class TableController {
 
     useEffect(() => { this.onChangeProcessFilter() }, [this.processFilter.value])
     useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('productionProcessId')?.getFilterValue()])
+
   }
 
   private onChangeDateFilter() {
@@ -94,7 +95,7 @@ export class TableController {
   private async loadData() {
     this.loading.set(true)
     try {
-      this.data.set(await this.efficiencyRecordRepository.getAll());
+      this.data.set(await this.listEfficiencyRecordCached.execute());
       const processes = await this.productionProcessRepository.getAll()
       this.processes.set(processes.map(item => item.description))
       this.loading.set(false)
@@ -104,7 +105,6 @@ export class TableController {
   }
 
   public handleClearFilters() {
-    console.log('546')
     this.areaFilter.set('')
     this.turnFilter.set('')
     this.areaFilterKey.set((prevKey) => prevKey + 1)
@@ -112,6 +112,7 @@ export class TableController {
     this.dateFilter.set(undefined)
     this.processFilter.set(undefined)
     this.table.reset()
+    this.table.setPageSize(this.data.value.length)
   }
 
   public goToDashboard() {
