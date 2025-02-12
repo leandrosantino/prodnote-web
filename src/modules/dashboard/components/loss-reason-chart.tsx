@@ -60,6 +60,7 @@ export function LossReasonChart({data}: {data: LossReasonChartData[]}) {
               tickLine={false}
               className="text-[.8rem] font-medium"
               tickMargin={0}
+              interval={0}
               axisLine={false}
               tickFormatter={(value) =>
                 chartConfig[value as keyof typeof chartConfig]?.label
