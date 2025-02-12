@@ -55,7 +55,7 @@ export class EfficiencyRecordRepository implements IEfficiencyRecordRepository {
     return data
   }
 
-  onCreate(cb: (data: EfficiencyRecord) => void): Function {
+  onCreate(cb: (data: EfficiencyRecord) => void): () => void {
     const itemsRef = query(
       collection(db, this.collectionName),
       where('date', '>', new Date())

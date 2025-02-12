@@ -7,7 +7,6 @@ import { TopFiveProcessChart } from "./components/top-five-process-chart"
 import { Button } from "@/components/ui/button"
 import { DateRangePicker } from "./components/date-range-picker"
 
-
 type props = {
   controller: DashboardController
 }
@@ -42,21 +41,19 @@ export function DashboardView({ controller }: props) {
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-[33%_auto] grid-rows-[380px] gap-2 max-lg:grid-cols-1">
+      <div className="w-full grid grid-cols-[43%_auto] grid-rows-[380px] gap-2 max-lg:grid-cols-1">
         <div className="">
-          <TopFiveProcessChart />
+          <TopFiveProcessChart data={controller.topFiveProcessChartData.value} />
         </div>
         <div className="">
-          <LossReasonChart />
+          <LossReasonChart data={controller.lossReasonChartData.value} />
         </div>
       </div>
 
-
-        <div className="w-full h-[250px]" >
-          {/* Diário */}
-          <DailyChart />
-        </div>
-
+      <div className="w-full h-[250px]" >
+        {/* Diário */}
+        <DailyChart data={controller.dailyChartData.value} />
+      </div>
 
     </div>
   )

@@ -12,36 +12,32 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { category: "Ajsute de Parâmetro", hours: 27, fill: 'hsl(var(--chart-2))' },
-  { category: "Setup", hours: 20, fill: 'hsl(var(--chart-2))' },
-  { category: "Máquina quebrada", hours: 18, fill: 'hsl(var(--chart-2))' },
-  { category: "Manutenção programada/preventiva", hours: 17, fill: 'hsl(var(--chart-2))' },
-  { category: "Organização/Limpeza/Refeição", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "Retrabalho", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "Refugo", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "RH", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "Logística", hours: 9, fill: 'hsl(var(--chart-2))' },
-  { category: "Eficiência Operacional", hours: 9, fill: 'hsl(var(--chart-2))' },
-]
 
 const chartConfig = {
   hours: {
-    label: "Horas",
+    label: "hrs",
   },
   'Ajsute de Parâmetro': { label: 'Ajsute-de-Parâmetro'},
   'Setup': { label: 'Setup'},
   'Máquina quebrada': { label: 'Máquina-quebrada'},
-  'Manutenção programada/preventiva': { label: 'Manutenção-programada'},
-  'Organização/Limpeza/Refeição': { label: 'Organização/Limpeza/Refeição'},
+  'Manutenção programada': { label: 'Manutenção-programada'},
+  'Organização/Limpeza': { label: 'Organização/Limpeza'},
+  'Troca de material': { label: 'Troca-de-material'},
+  'Refeição': { label: 'Refeição'},
   'Retrabalho': { label: 'Retrabalho'},
   'Refugo': { label: 'Refugo'},
   'RH': { label: 'RH'},
   'Logística': { label: 'Logística'},
-  'Eficiência Operacional': { label: 'Eficiência-Operacional'},
+  'Operacional': { label: 'Operacional'},
 } satisfies ChartConfig
 
-export function LossReasonChart() {
+export type LossReasonChartData = {
+  category: string;
+  hours: number;
+  fill: string;
+}
+
+export function LossReasonChart({data}: {data: LossReasonChartData[]}) {
   return (
     <Card className="h-full w-full rounded-md">
       <CardHeader>
@@ -51,10 +47,10 @@ export function LossReasonChart() {
         <ChartContainer className="max-h-[320px] w-full" config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             layout="vertical"
             margin={{
-              left: 128,
+              left: 100,
               right: 30
             }}
           >
@@ -72,7 +68,7 @@ export function LossReasonChart() {
             <XAxis dataKey="hours" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent  />}
             />
             <Bar dataKey="hours" layout="vertical" radius={5} >
               <LabelList style={{ fontWeight: 500, fontSize: '.9rem'}}  dataKey="hours" position="right" formatter={(item: number) => item + ' h'} />

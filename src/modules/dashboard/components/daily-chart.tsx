@@ -11,42 +11,44 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+
 const chartData = [
-  { date: "01", desktop: 0.83 },
-  { date: "02", desktop: 0.45 },
-  { date: "03", desktop: 0.85 },
-  { date: "04", desktop: 0.89 },
-  { date: "05", desktop: 0.90 },
-  { date: "06", desktop: 0.58 },
-  { date: "07", desktop: 0.70 },
-  { date: "08", desktop: 0.35 },
-  { date: "09", desktop: 0.45 },
-  { date: "10", desktop: 0.78 },
-  { date: "11", desktop: 0.89 },
-  { date: "12", desktop: 0.92 },
-  { date: "13", desktop: 0.56 },
-  { date: "14", desktop: 0.45 },
-  { date: "15", desktop: 0.83 },
-  { date: "16", desktop: 0.85 },
-  { date: "17", desktop: 0.84 },
-  { date: "18", desktop: 0.83 },
-  { date: "19", desktop: 0.83 },
-  { date: "20", desktop: 0.69 },
-  { date: "21", desktop: 0.78 },
-  { date: "22", desktop: 0.79 },
-  { date: "23", desktop: 0.78 },
-  { date: "24", desktop: 0.83 },
-  { date: "25", desktop: 0.83 },
-  { date: "26", desktop: 0.78 },
-  { date: "27", desktop: 0.89 },
-  { date: "28", desktop: 0.45 },
-  { date: "29", desktop: 0.77 },
-  { date: "30", desktop: 0.89 },
+  { date: "01", oee: 0.83 },
+  { date: "02", oee: 0.45 },
+  { date: "03", oee: 0.85 },
+  { date: "04", oee: 0.89 },
+  { date: "05", oee: 0.90 },
+  { date: "06", oee: 0.58 },
+  { date: "07", oee: 0.70 },
+  { date: "08", oee: 0.35 },
+  { date: "09", oee: 0.45 },
+  { date: "10", oee: 0.78 },
+  { date: "11", oee: 0.89 },
+  { date: "12", oee: 0.92 },
+  { date: "13", oee: 0.56 },
+  { date: "14", oee: 0.45 },
+  { date: "15", oee: 0.83 },
+  { date: "16", oee: 0.85 },
+  { date: "17", oee: 0.84 },
+  { date: "18", oee: 0.83 },
+  { date: "19", oee: 0.83 },
+  { date: "20", oee: 0.69 },
+  { date: "21", oee: 0.78 },
+  { date: "22", oee: 0.79 },
+  { date: "23", oee: 0.78 },
+  { date: "24", oee: 0.83 },
+  { date: "25", oee: 0.83 },
+  { date: "26", oee: 0.78 },
+  { date: "27", oee: 0.89 },
+  { date: "28", oee: 0.45 },
+  { date: "29", oee: 0.77 },
+  { date: "30", oee: 0.89 },
+  { date: "31", oee: 0.89 },
 ]
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  oee: {
+    label: "OEE",
     color: "hsl(var(--primary))",
   },
   goal: {
@@ -56,7 +58,12 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
-export function DailyChart() {
+export type DailyChartData = {
+  date: string;
+  oee: number;
+}
+
+export function DailyChart({ data }: {data: DailyChartData[]}) {
   return (
     <Card className="max-h-full w-full rounded-md">
       <CardHeader>
@@ -66,7 +73,7 @@ export function DailyChart() {
         <ChartContainer className="max-h-[160px] w-full" config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               top: 20,
               left: 12,
@@ -95,12 +102,12 @@ export function DailyChart() {
               label={{ value: "Meta: 83%", position: "insideTopLeft", fill: "var(--color-goal)" }}
             />
             <Line
-              dataKey="desktop"
+              dataKey="oee"
               type="natural"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-oee)"
               strokeWidth={2}
               dot={{
-                fill: "var(--color-desktop)",
+                fill: "var(--color-oee)",
               }}
               activeDot={{
                 r: 6,

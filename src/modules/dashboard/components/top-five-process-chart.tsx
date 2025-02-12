@@ -12,26 +12,27 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+
 const chartData = [
-  { category: "MOLDAGEM M15", hours: 27, fill: 'hsl(var(--chart-1))' },
-  { category: "MOLDAGEM M51", hours: 20, fill: 'hsl(var(--chart-1))' },
-  { category: "ACOPLAGEM M19", hours: 18, fill: 'hsl(var(--chart-1))' },
-  { category: "ACOPLAGEM M20", hours: 17, fill: 'hsl(var(--chart-1))' },
-  { category: "MONTAGEM 521", hours: 9, fill: 'hsl(var(--chart-1))' },
+  { category: "MOLDAGEM M15", oee: 0.5, fill: 'hsl(var(--chart-1))' },
+  { category: "MOLDAGEM M51", oee: 0.6, fill: 'hsl(var(--chart-1))' },
+  { category: "ACOPLAGEM M19", oee: 0.65, fill: 'hsl(var(--chart-1))' },
+  { category: "ACOPLAGEM M20", oee: 0.74, fill: 'hsl(var(--chart-1))' },
+  { category: "MONTAGEM 521", oee:0.75, fill: 'hsl(var(--chart-1))' },
 ]
 
-const chartConfig = {
-  hours: {
-    label: "Horas",
-  },
-  'MOLDAGEM M15' : { label: 'MOLDAGEM M15'  },
-  'MOLDAGEM M51' : { label: 'MOLDAGEM M51'  },
-  'ACOPLAGEM M19': { label: 'ACOPLAGEM M19' },
-  'ACOPLAGEM M20': { label: 'ACOPLAGEM M20' },
-  'MONTAGEM 521' : { label: 'MONTAGEM 521'  },
-} satisfies ChartConfig
+export type TopFiveProcessChartData = {
+  category: string;
+  oee: number;
+  fill: string;
+}
 
-export function TopFiveProcessChart() {
+export function TopFiveProcessChart({data}: {data: TopFiveProcessChartData[]}) {
+
+  const categories: Record<string, {label: string}> = {}
+  data.forEach(item => { categories[item.category] = {label: item.category} })
+  const chartConfig = { oee: { label: "OEE" }, ...categories} satisfies ChartConfig
+
   return (
     <Card className="h-full w-full rounded-md">
       <CardHeader>
@@ -41,11 +42,11 @@ export function TopFiveProcessChart() {
         <ChartContainer className="h-[320px]  w-full" config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             layout="vertical"
             margin={{
-              left: 30,
-              right: 30,
+              left: 50,
+              right: 50,
             }}
           >
             <YAxis
@@ -59,13 +60,19 @@ export function TopFiveProcessChart() {
                 chartConfig[value as keyof typeof chartConfig]?.label
               }
             />
-            <XAxis dataKey="hours" type="number" hide />
+            <XAxis dataKey="oee" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent
+                valueFormat={(value: string) => `${(Number(value.replace(',', '.'))* 100).toFixed(0)}%`}
+              />}
             />
-            <Bar dataKey="hours" layout="vertical" radius={5} >
-              <LabelList style={{ fontWeight: 500, fontSize: '.9rem'}}  dataKey="hours" position="right" formatter={(item: number) => item + ' h'} />
+            <Bar dataKey="oee" layout="vertical" radius={5} >
+              <LabelList
+                style={{ fontWeight: 500, fontSize: '.9rem'}}
+                dataKey="oee" position="right"
+                formatter={(value: number) => `${(value * 100).toFixed(0)}%`}
+              />
             </Bar>
           </BarChart>
         </ChartContainer>

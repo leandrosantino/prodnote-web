@@ -34,21 +34,27 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
     const cycleTimeInMinutes = productionProcess.cycleTimeInSeconds / 60
 
     const productionEfficiencyLosses: EfficiencyRecord['productionEfficiencyLosses'] = efficiencyRecordData.reasons
-      .map(item => ({
-        classification: classificationTypesMap[item.class as ClassificationTypes],
-        description: item.description,
-        cause: item.class,
-        lostTimeInMinutes: item.time
-      }))
+      .map(item => {
+        let lostTimeInMinutes = item.time
+        if (item.class === 'Retrabalho' || item.class === 'Refugo') {
+          lostTimeInMinutes = lostTimeInMinutes * cycleTimeInMinutes
+        }
+        return {
+          classification: classificationTypesMap[item.class as ClassificationTypes],
+          description: item.description,
+          cause: item.class,
+          lostTimeInMinutes
+        }
+      })
 
     const totalRework = efficiencyRecordData.reasons
       .filter(item => item.class === 'Retrabalho')
-      .map(({ time: parts }) => parts * cycleTimeInMinutes)
+      .map(({ time: parts }) => parts)
       .reduce((acc, val) => acc + val, 0)
 
     const totalScrap = efficiencyRecordData.reasons
       .filter(item => item.class === 'Refugo')
-      .map(({ time: parts }) => parts * cycleTimeInMinutes)
+      .map(({ time: parts }) => parts)
       .reduce((acc, val) => acc + val, 0)
 
     const totalReasonsTime = efficiencyRecordData.reasons

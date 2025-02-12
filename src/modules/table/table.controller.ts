@@ -49,10 +49,7 @@ export class TableController {
   ) {
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])
     useEffect(() => { this.loadData() }, [])
-    useEffect(() => {
-      const unsubscribe = this.listEfficiencyRecordCached.onCreate()
-      return unsubscribe()
-    }, [])
+    useEffect(() => this.startEfficiencyRecordListinner(), [])
 
     useEffect(() => { this.onChangeDateFilter() }, [this.dateFilter.value])
     useEffect(() => { this.onChangeTableDateFilter() }, [this.table.getColumn('date')?.getFilterValue()])
@@ -66,6 +63,11 @@ export class TableController {
     useEffect(() => { this.onChangeProcessFilter() }, [this.processFilter.value])
     useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('productionProcessId')?.getFilterValue()])
 
+  }
+
+  private startEfficiencyRecordListinner() {
+    const unsubscribe = this.listEfficiencyRecordCached.onCreate()
+    return unsubscribe
   }
 
   private onChangeDateFilter() {
