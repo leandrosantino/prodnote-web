@@ -25,7 +25,7 @@ export function DashboardView({ controller }: props) {
         <Button onClick={() => controller.resetCache()} variant='destructive' > Hard Refresh <RefreshCcwDot  /> </Button>
       </div>
 
-      <div className="w-full flex justify-between items-center py-3" >
+      <div className="w-full flex justify-center items-center py-3" >
         <div className="flex gap-2 flex-wrap" >
           <div className="flex gap-2 flex-wrap" >
             <DatePicker date={controller.dateFilter.value} setDate={controller.dateFilter.set} />
