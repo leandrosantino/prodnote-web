@@ -96,12 +96,14 @@ export class ReportService implements IReportService {
   calculateTotalOfBreakdowns(data: EfficiencyRecord[]): number {
     if (data.length < 1) return 0;
     let count = 0
-    data.forEach(({ productionEfficiencyLosses }) => {
+    let totalOfProductionTimeInMinutes = 0
+    data.forEach(({ productionEfficiencyLosses, productionTimeInMinutes }) => {
+      totalOfProductionTimeInMinutes += productionTimeInMinutes
       productionEfficiencyLosses.forEach(({ lostTimeInMinutes, ...loss }) => {
-        if (loss.cause === 'Máquina quebrada') count++
+        if (loss.cause === 'Máquina quebrada') count += lostTimeInMinutes
       })
     })
-    return count
+    return count / totalOfProductionTimeInMinutes * 100
   }
 
   calculateTotalOfScrap(data: EfficiencyRecord[]): number {

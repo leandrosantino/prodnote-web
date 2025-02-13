@@ -147,7 +147,7 @@ export class DashboardController {
 
   private calculateTotalOfBreakdowns() {
     const value = this.reportService.calculateTotalOfBreakdowns(this.dataFiltered.value)
-    this.totalOfBreakdowns.set(value.toString())
+    this.totalOfBreakdowns.set(value.toFixed(1) + ' %')
   }
 
   private calculateLossReasonChartData() {

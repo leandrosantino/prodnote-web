@@ -58,7 +58,7 @@ export function DashboardView({ controller }: props) {
             <DataCard label="Breakdowns" value={controller.totalOfBreakdowns.value} Icon={OctagonX} />
           </div>
           <div>
-            <DataCard label="Retrabalho (pçs)" value={controller.totalOfRework.value} Icon={Repeat2} />
+            <DataCard label="Retrabalho" value={controller.totalOfRework.value} Icon={Repeat2} />
           </div>
           <div>
             <DataCard label="Refugo" value={controller.totalOfScrap.value} Icon={Trash2} />
