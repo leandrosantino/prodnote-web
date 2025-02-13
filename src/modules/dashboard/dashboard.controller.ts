@@ -73,6 +73,11 @@ export class DashboardController {
     }, [this.dateFilter.value])
   }
 
+  public async resetCache() {
+    await this.listEfficiencyRecordCached.reserCache()
+    await this.loadData()
+  }
+
   private onChangeFilters() {
     if (!this.dateFilter.value) {
       this.dataFilteredByMonth.set(this.data.value)

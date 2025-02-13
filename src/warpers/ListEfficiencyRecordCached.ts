@@ -22,9 +22,7 @@ export class ListEfficiencyRecordCached {
     const cachedData = this.getCachedData()
 
     if (!cachedData) {
-      const data = await this.efficiencyRecordRepository.getAll()
-      console.log('database All', data.length)
-      return this.revalidate(data)
+      return this.reserCache()
     }
 
     if (cachedData.expiresIn <= now) {
@@ -51,6 +49,12 @@ export class ListEfficiencyRecordCached {
         this.revalidate(cachedData.data)
       }
     })
+  }
+
+  async reserCache() {
+    const data = await this.efficiencyRecordRepository.getAll()
+    console.log('database All', data.length)
+    return this.revalidate(data)
   }
 
   private async revalidate(data: EfficiencyRecord[]) {

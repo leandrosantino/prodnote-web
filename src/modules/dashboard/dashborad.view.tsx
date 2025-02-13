@@ -1,6 +1,6 @@
 import { DashboardController } from "./dashboard.controller"
 import { DataCard } from "./components/data-card"
-import { Download, FilterX, OctagonX, Repeat2, Table, Target, Trash2 } from "lucide-react"
+import { Download, FilterX, OctagonX, RefreshCcwDot, Repeat2, Table, Target, Trash2 } from "lucide-react"
 import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
@@ -19,7 +19,11 @@ type props = {
 export function DashboardView({ controller }: props) {
   return (
     <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-2 overflow-auto" >
-      <h2 className='text-3xl font-bold max-md:text-2xl' >Dashboard - Lançamento de OEE</h2>
+
+      <div className="flex gap-2 flex-wrap justify-between pb-4" >
+        <h2 className='text-3xl font-bold max-md:text-2xl' >Dashboard - Lançamento de OEE</h2>
+        <Button onClick={() => controller.resetCache()} variant='destructive' > Hard Refresh <RefreshCcwDot  /> </Button>
+      </div>
 
       <div className="w-full flex justify-between items-center py-3" >
         <div className="flex gap-2 flex-wrap" >
@@ -40,8 +44,8 @@ export function DashboardView({ controller }: props) {
               className="text-red-600 hover:text-red-600 hover:bg-red-50 active:bg-red-100"
               onClick={ () => {controller.handleClearFilters()} }
             > <FilterX /> </Button>
-            <Button onClick={() => controller.goToTablePage() } variant='outline'> Dados <Table /> </Button>
-            <Button onClick={() => controller.report()}> Relatório <Download /> </Button>
+            <Button onClick={() => controller.goToTablePage() } variant='outline' className="w-20"> Dados <Table /> </Button>
+            <Button onClick={() => controller.report()} className="w-24" > Relatório <Download /> </Button>
           </div>
         </div>
       </div>

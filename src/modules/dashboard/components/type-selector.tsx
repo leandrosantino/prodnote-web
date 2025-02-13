@@ -10,7 +10,7 @@ export function TypeSelector({setValue, value}: props) {
 
   return (
     <Select onValueChange={val => setValue(val as props['value'])} value={value} >
-      <SelectTrigger className="w-[100px]">
+      <SelectTrigger className="w-[86px]">
         <SelectValue placeholder="Intervalo" />
       </SelectTrigger>
       <SelectContent>

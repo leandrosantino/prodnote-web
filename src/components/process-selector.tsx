@@ -35,7 +35,7 @@ export function ProcessSelector({ value, setValue, processes }: props) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[280px] justify-between font-normal"
+          className="w-[230px] justify-between font-normal"
         >
           {value
             ? processes.find((process) => process === value)
