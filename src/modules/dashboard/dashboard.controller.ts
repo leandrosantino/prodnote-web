@@ -32,7 +32,7 @@ export class DashboardController {
   public topFiveProcessChartData = useStateObject<TopFiveProcessChartData[]>([])
   public dailyChartData = useStateObject<DailyChartData[]>([])
 
-  public dateRangeFilter = useStateObject<Date | undefined>(new Date())
+  public dateFilter = useStateObject<Date | undefined>(new Date())
   public typeFilter = useStateObject<'month' | 'day'>('day')
   public areaFilter = useStateObject<string | undefined>()
   public turnFilter = useStateObject<string | undefined>()
@@ -62,7 +62,7 @@ export class DashboardController {
     useEffect(() => { this.calculateTopFiveProcessChartData() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateDailyChartData() }, [this.dataFilteredByMonth.value])
     useEffect(() => { this.onChangeFilters() }, [
-      this.dateRangeFilter.value,
+      this.dateFilter.value,
       this.typeFilter.value,
       this.areaFilter.value,
       this.turnFilter.value,
@@ -71,12 +71,12 @@ export class DashboardController {
   }
 
   private onChangeFilters() {
-    if (!this.dateRangeFilter.value) {
+    if (!this.dateFilter.value) {
       this.dataFilteredByMonth.set(this.data.value)
       this.dataFiltered.set(this.data.value)
       return
     }
-    const selectedMonth = this.dateRangeFilter.value?.getMonth()
+    const selectedMonth = this.dateFilter.value?.getMonth()
     const filteredByMonth: EfficiencyRecord[] = []
     const filteredByDateRange: EfficiencyRecord[] = []
     this.data.value.forEach((item) => {
@@ -84,12 +84,21 @@ export class DashboardController {
       if (this.turnFilter.value && item.turn !== this.turnFilter.value) return
       if (this.processFilter.value && item.productionProcessId !== this.processFilter.value) return
       if (item.date.getMonth() === selectedMonth) filteredByMonth.push(item)
-      if (this.typeFilter.value === 'day' && isSameDay(item.date, this.dateRangeFilter.value as Date)) filteredByDateRange.push(item)
+      if (this.typeFilter.value === 'day' && isSameDay(item.date, this.dateFilter.value as Date)) filteredByDateRange.push(item)
       if (this.typeFilter.value === 'month' && item.date.getMonth() === selectedMonth) filteredByDateRange.push(item)
 
     })
     this.dataFilteredByMonth.set(filteredByMonth)
     this.dataFiltered.set(filteredByDateRange)
+  }
+
+  public handleClearFilters() {
+    this.areaFilter.set('')
+    this.turnFilter.set('')
+    this.areaFilterKey.set((prevKey) => prevKey + 1)
+    this.turnFilterKey.set((prevKey) => prevKey + 1)
+    this.dateFilter.set(undefined)
+    this.processFilter.set(undefined)
   }
 
   private startEfficiencyRecordListinner() {
