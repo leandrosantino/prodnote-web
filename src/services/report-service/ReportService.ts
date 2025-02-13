@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 import { IReportService } from "./IReportService";
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
-import { ClassificationTypes, EfficiencyLoss } from "@/entities/EfficiencyLoss";
+import { ClassificationTypes } from "@/entities/EfficiencyLoss";
 
 @singleton()
 export class ReportService implements IReportService {
@@ -60,7 +60,8 @@ export class ReportService implements IReportService {
 
   calculatelossReasonChartData(data: EfficiencyRecord[]): Array<{ class: ClassificationTypes; timeInHours: number; }> {
     if (data.length < 1) return [];
-    const grouped: Record<ClassificationTypes, number> = {
+    type a = ClassificationTypes | 'Micro paradas'
+    const grouped: Record<a, number> = {
       'Ajsute de Parâmetro': 0,
       'Setup': 0,
       'Máquina quebrada': 0,
@@ -73,12 +74,13 @@ export class ReportService implements IReportService {
       'RH': 0,
       'Logística': 0,
       'Operacional': 0,
+      'Micro paradas': 0
     }
 
     data.forEach(({ productionEfficiencyLosses }) => {
       productionEfficiencyLosses.forEach((loss) => {
         if (loss.cause in grouped) {
-          grouped[loss.cause as ClassificationTypes] += Math.round(loss.lostTimeInMinutes / 60 * 100) / 100
+          grouped[loss.cause as a] += loss.lostTimeInMinutes
         }
       })
     })
@@ -91,9 +93,15 @@ export class ReportService implements IReportService {
     return formated
   }
 
-  calculateTotalOfProduction(data: EfficiencyRecord[]): number {
-    const totalOfProduction = this.sum(data.map(({ piecesQuantity }) => piecesQuantity))
-    return totalOfProduction
+  calculateTotalOfBreakdowns(data: EfficiencyRecord[]): number {
+    if (data.length < 1) return 0;
+    let count = 0
+    data.forEach(({ productionEfficiencyLosses }) => {
+      productionEfficiencyLosses.forEach(({ lostTimeInMinutes, ...loss }) => {
+        if (loss.cause === 'Máquina quebrada') count++
+      })
+    })
+    return count
   }
 
   calculateTotalOfScrap(data: EfficiencyRecord[]): number {
@@ -123,23 +131,27 @@ export class ReportService implements IReportService {
 
   calculateTotalOfRework(data: EfficiencyRecord[]): number {
     if (data.length < 1) return 0;
-    const losses: EfficiencyLoss[] = []
-    data.forEach(({ productionEfficiencyLosses, oeeValue, productionTimeInMinutes, piecesQuantity }) => {
-      const usefulTimeInMunites = oeeValue * productionTimeInMinutes
-      productionEfficiencyLosses.forEach(({ lostTimeInMinutes, ...loss }) => {
+
+    const scrapLossesTimes: number[] = []
+    const qualityLossesTimes: number[] = []
+    const usefulTimes: number[] = []
+
+    data.forEach(({ productionEfficiencyLosses, oeeValue, productionTimeInMinutes }) => {
+      usefulTimes.push(oeeValue * productionTimeInMinutes)
+      productionEfficiencyLosses.forEach((loss) => {
         if (loss.cause === 'Retrabalho') {
-          const calculated = lostTimeInMinutes * piecesQuantity / usefulTimeInMunites
-          losses.push({
-            ...loss,
-            lostTimeInMinutes: calculated
-          })
+          scrapLossesTimes.push(loss.lostTimeInMinutes)
+          qualityLossesTimes.push(loss.lostTimeInMinutes)
         }
+        if (loss.cause === 'Refugo') qualityLossesTimes.push(loss.lostTimeInMinutes)
       })
     })
 
-    const filteredLosses = losses.map(({ lostTimeInMinutes }) => lostTimeInMinutes)
+    const totalOfScrapLostTimeInMinutes = this.sum(scrapLossesTimes)
+    const totalOfQualityLostTimeInMinutes = this.sum(qualityLossesTimes)
+    const totalOfUsefulTimeInMinutes = this.sum(usefulTimes)
 
-    return Math.round(this.sum(filteredLosses))
+    return (totalOfScrapLostTimeInMinutes / (totalOfQualityLostTimeInMinutes + totalOfUsefulTimeInMinutes)) * 100
   }
 
   caculateOeeValue(data: EfficiencyRecord[]): number {

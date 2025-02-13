@@ -15,7 +15,7 @@ export class ListEfficiencyRecordCached {
   ) { }
 
   storageKey = 'efficiencyRecords'
-  revalidateInterval = 2
+  revalidateInterval = 5
 
   async execute() {
     const now = new Date().valueOf()

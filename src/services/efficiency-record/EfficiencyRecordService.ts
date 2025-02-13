@@ -64,6 +64,20 @@ export class EfficiencyRecordService implements IEfficiencyRecordService {
       + totalRework
       + totalScrap
 
+    const usefulTimeInMunites = oeeValue * productionTimeInMinutes
+    const totalTimeOfMicroLosses = productionTimeInMinutes - totalReasonsTime - usefulTimeInMunites
+
+    console.log(totalTimeOfMicroLosses)
+
+    if (totalTimeOfMicroLosses > 0) {
+      productionEfficiencyLosses.push({
+        cause: 'Micro paradas',
+        classification: 'Organizational Issues',
+        description: '',
+        lostTimeInMinutes: totalTimeOfMicroLosses
+      })
+    }
+
     const productionEfficiencyRecord: EfficiencyRecord = {
       date: new Date(efficiencyRecordData.date),
       oeeValue,

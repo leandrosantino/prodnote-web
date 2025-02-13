@@ -21,10 +21,10 @@ export class DashboardController {
   private dataFiltered = useStateObject<EfficiencyRecord[]>([])
   private dataFilteredByMonth = useStateObject<EfficiencyRecord[]>([])
 
-  public loading = useStateObject(false)
+  public loading = useStateObject(true)
 
   public oeeValue = useStateObject('--')
-  public totalOfProduction = useStateObject('--')
+  public totalOfBreakdowns = useStateObject('--')
   public totalOfRework = useStateObject('--')
   public totalOfScrap = useStateObject('--')
 
@@ -57,7 +57,7 @@ export class DashboardController {
     useEffect(() => { this.caculateOeeValue() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateTotalOfRework() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateTotalOfScrap() }, [this.dataFiltered.value])
-    useEffect(() => { this.calculateTotalOfProduction() }, [this.dataFiltered.value])
+    useEffect(() => { this.calculateTotalOfBreakdowns() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateLossReasonChartData() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateTopFiveProcessChartData() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateDailyChartData() }, [this.dataFilteredByMonth.value])
@@ -68,6 +68,9 @@ export class DashboardController {
       this.turnFilter.value,
       this.processFilter.value,
     ])
+    useEffect(() => {
+      if (this.dateFilter.value === undefined) this.dateFilter.set(new Date())
+    }, [this.dateFilter.value])
   }
 
   private onChangeFilters() {
@@ -129,7 +132,7 @@ export class DashboardController {
 
   private calculateTotalOfRework() {
     const value = this.reportService.calculateTotalOfRework(this.dataFiltered.value)
-    this.totalOfRework.set(value.toString())
+    this.totalOfRework.set(value.toFixed(1) + '%')
   }
 
   private calculateTotalOfScrap() {
@@ -137,9 +140,9 @@ export class DashboardController {
     this.totalOfScrap.set(value.toFixed(1) + ' %')
   }
 
-  private calculateTotalOfProduction() {
-    const value = this.reportService.calculateTotalOfProduction(this.dataFiltered.value)
-    this.totalOfProduction.set(value.toString())
+  private calculateTotalOfBreakdowns() {
+    const value = this.reportService.calculateTotalOfBreakdowns(this.dataFiltered.value)
+    this.totalOfBreakdowns.set(value.toString())
   }
 
   private calculateLossReasonChartData() {

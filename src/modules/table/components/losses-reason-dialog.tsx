@@ -37,8 +37,7 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
                 <CardContent>
                   <p>{item.description}</p>
                   <p>
-                    {item.classification === 'Scrap + Quality Issues' ? 'Peças: ' : 'Tempo (min): '}
-                    {item.lostTimeInMinutes}
+                    Tempo: <span className="font-medium" > {item.lostTimeInMinutes.toFixed(0)} min </span>
                   </p>
                 </CardContent>
               </Card>

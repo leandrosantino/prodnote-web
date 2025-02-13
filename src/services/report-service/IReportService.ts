@@ -6,7 +6,7 @@ export interface IReportService {
   caculateOeeValue(data: EfficiencyRecord[]): number
   calculateTotalOfRework(data: EfficiencyRecord[]): number
   calculateTotalOfScrap(data: EfficiencyRecord[]): number
-  calculateTotalOfProduction(data: EfficiencyRecord[]): number
+  calculateTotalOfBreakdowns(data: EfficiencyRecord[]): number
   calculatelossReasonChartData(data: EfficiencyRecord[]): Array<{
     class: ClassificationTypes,
     timeInHours: number

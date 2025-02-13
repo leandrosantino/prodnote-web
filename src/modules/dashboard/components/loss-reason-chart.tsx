@@ -15,7 +15,7 @@ import {
 
 const chartConfig = {
   hours: {
-    label: "hrs",
+    label: "min",
   },
   'Ajsute de Parâmetro': { label: 'Ajsute-de-Parâmetro'},
   'Setup': { label: 'Setup'},
@@ -29,6 +29,7 @@ const chartConfig = {
   'RH': { label: 'RH'},
   'Logística': { label: 'Logística'},
   'Operacional': { label: 'Operacional'},
+  'Micro paradas': { label: 'Micro-paradas'}
 } satisfies ChartConfig
 
 export type LossReasonChartData = {
@@ -41,7 +42,7 @@ export function LossReasonChart({data}: {data: LossReasonChartData[]}) {
   return (
     <Card className="h-full w-full rounded-md">
       <CardHeader>
-        <CardTitle>Perdas por Classificação</CardTitle>
+        <CardTitle>Perdas por Classificação (min)</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer className="max-h-[320px] w-full" config={chartConfig}>
@@ -72,7 +73,7 @@ export function LossReasonChart({data}: {data: LossReasonChartData[]}) {
               content={<ChartTooltipContent  />}
             />
             <Bar dataKey="hours" layout="vertical" radius={5} >
-              <LabelList style={{ fontWeight: 500, fontSize: '.9rem'}}  dataKey="hours" position="right" formatter={(item: number) => item + ' h'} />
+              <LabelList style={{ fontWeight: 500, fontSize: '.9rem'}}  dataKey="hours" position="right" formatter={(item: number) => item.toFixed(0)} />
             </Bar>
           </BarChart>
         </ChartContainer>
