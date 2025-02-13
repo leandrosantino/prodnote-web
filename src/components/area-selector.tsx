@@ -11,7 +11,7 @@ export function AreaSelector({setValue, value}: props) {
 
   return (
     <Select onValueChange={setValue} value={value} >
-      <SelectTrigger className="w-[130px]">
+      <SelectTrigger className="w-[85px]">
         <SelectValue placeholder="Área" />
       </SelectTrigger>
       <SelectContent>

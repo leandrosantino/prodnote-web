@@ -9,7 +9,7 @@ export function TurnSelector({ value, setValue }: props) {
 
   return (
     <Select onValueChange={setValue} value={value} >
-      <SelectTrigger className="w-[130px]">
+      <SelectTrigger className="w-[85px]">
         <SelectValue placeholder="Turno" />
       </SelectTrigger>
       <SelectContent>

@@ -1,7 +1,6 @@
 "use client"
 
-import * as React from "react"
-import { subDays, format } from "date-fns"
+import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 
@@ -15,16 +14,15 @@ import {
 } from "@/components/ui/popover"
 import { ptBR } from "date-fns/locale"
 
-export function DateRangePicker({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: subDays(new Date(), 6),
-    to: new Date(),
-  })
+type props = {
+  date: DateRange | undefined
+  setDate: (date: props['date']) => void
+}
+
+export function DateRangePicker({ date, setDate }: props) {
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2")}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -58,7 +56,7 @@ export function DateRangePicker({
             defaultMonth={date?.from}
             selected={date}
             onSelect={setDate}
-            numberOfMonths={2}
+            numberOfMonths={1}
           />
         </PopoverContent>
       </Popover>

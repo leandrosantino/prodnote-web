@@ -104,9 +104,10 @@ export class TableController {
       this.data.set(await this.listEfficiencyRecordCached.execute());
       const processes = await this.productionProcessRepository.getAll()
       this.processes.set(processes.map(item => item.description))
-      this.loading.set(false)
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
+    } finally {
+      this.loading.set(false)
     }
   }
 

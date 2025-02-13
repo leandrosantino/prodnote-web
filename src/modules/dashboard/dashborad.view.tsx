@@ -5,7 +5,11 @@ import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
 import { Button } from "@/components/ui/button"
-import { DateRangePicker } from "./components/date-range-picker"
+import { DatePicker } from "@/components/date-picker"
+import { TypeSelector } from "./components/type-selector"
+import { AreaSelector } from "@/components/area-selector"
+import { TurnSelector } from "@/components/turn-selector"
+import { ProcessSelector } from "@/components/process-selector"
 
 type props = {
   controller: DashboardController
@@ -17,8 +21,16 @@ export function DashboardView({ controller }: props) {
       <h2 className='text-3xl font-bold max-md:text-2xl' >Dashboard - Lançamento de OEE</h2>
 
       <div className="w-full h-12 flex justify-between items-center">
-        <div>
-          <DateRangePicker />
+        <div className="flex gap-2" >
+          <DatePicker date={controller.dateRangeFilter.value} setDate={controller.dateRangeFilter.set} />
+          <TypeSelector value={controller.typeFilter.value} setValue={controller.typeFilter.set} />
+          <AreaSelector key={controller.areaFilterKey.value} setValue={controller.areaFilter.set} value={controller.areaFilter.value}  />
+          <TurnSelector key={controller.turnFilterKey.value} setValue={controller.turnFilter.set} value={controller.turnFilter.value}  />
+          <ProcessSelector
+            processes={controller.processes.value}
+            value={controller.processFilter.value}
+            setValue={controller.processFilter.set}
+          />
         </div>
         <div className="flex gap-2" >
           <Button onClick={() => controller.goToTablePage() } variant='outline'> Dados <Table /> </Button>

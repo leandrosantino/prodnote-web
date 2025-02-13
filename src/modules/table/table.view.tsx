@@ -6,9 +6,9 @@ import { flexRender } from "@tanstack/react-table"
 import { Loading } from "@/components/Loading"
 import { LossesReasonDialog } from "./components/losses-reason-dialog"
 import { DatePicker } from "@/components/date-picker"
-import { AreaSelector } from "./components/area-selector"
-import { TurnSelector } from "./components/turn-selector"
-import { ProcessSelector } from "./components/process-selector"
+import { AreaSelector } from "../../components/area-selector"
+import { TurnSelector } from "../../components/turn-selector"
+import { ProcessSelector } from "../../components/process-selector"
 
 type props = {
   controller: TableController

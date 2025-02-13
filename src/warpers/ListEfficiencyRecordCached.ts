@@ -29,7 +29,6 @@ export class ListEfficiencyRecordCached {
 
     if (cachedData.expiresIn <= now) {
       const lastId = cachedData.data[0].date
-      console.log(lastId)
       const newData = await this.efficiencyRecordRepository.findMany({
         operator: '>',
         date: lastId

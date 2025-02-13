@@ -98,17 +98,27 @@ export class ReportService implements IReportService {
 
   calculateTotalOfScrap(data: EfficiencyRecord[]): number {
     if (data.length < 1) return 0;
-    const losses: EfficiencyLoss[] = []
-    data.forEach(({ productionEfficiencyLosses }) => {
+
+    const scrapLossesTimes: number[] = []
+    const qualityLossesTimes: number[] = []
+    const usefulTimes: number[] = []
+
+    data.forEach(({ productionEfficiencyLosses, oeeValue, productionTimeInMinutes }) => {
+      usefulTimes.push(oeeValue * productionTimeInMinutes)
       productionEfficiencyLosses.forEach((loss) => {
-        if (loss.cause === 'Refugo') losses.push(loss)
+        if (loss.cause === 'Refugo') {
+          scrapLossesTimes.push(loss.lostTimeInMinutes)
+          qualityLossesTimes.push(loss.lostTimeInMinutes)
+        }
+        if (loss.cause === 'Retrabalho') qualityLossesTimes.push(loss.lostTimeInMinutes)
       })
     })
 
-    const totalOfLostTimeInMinutes = this.sum(losses.map(({ lostTimeInMinutes }) => lostTimeInMinutes))
-    const totalOfProductionTimeInMinutes = this.sum(data.map(({ productionTimeInMinutes }) => productionTimeInMinutes))
+    const totalOfScrapLostTimeInMinutes = this.sum(scrapLossesTimes)
+    const totalOfQualityLostTimeInMinutes = this.sum(qualityLossesTimes)
+    const totalOfUsefulTimeInMinutes = this.sum(usefulTimes)
 
-    return (totalOfLostTimeInMinutes / totalOfProductionTimeInMinutes) * 100
+    return (totalOfScrapLostTimeInMinutes / (totalOfQualityLostTimeInMinutes + totalOfUsefulTimeInMinutes)) * 100
   }
 
   calculateTotalOfRework(data: EfficiencyRecord[]): number {
