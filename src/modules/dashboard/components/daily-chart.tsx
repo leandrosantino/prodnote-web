@@ -12,40 +12,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-const chartData = [
-  { date: "01", oee: 0.83 },
-  { date: "02", oee: 0.45 },
-  { date: "03", oee: 0.85 },
-  { date: "04", oee: 0.89 },
-  { date: "05", oee: 0.90 },
-  { date: "06", oee: 0.58 },
-  { date: "07", oee: 0.70 },
-  { date: "08", oee: 0.35 },
-  { date: "09", oee: 0.45 },
-  { date: "10", oee: 0.78 },
-  { date: "11", oee: 0.89 },
-  { date: "12", oee: 0.92 },
-  { date: "13", oee: 0.56 },
-  { date: "14", oee: 0.45 },
-  { date: "15", oee: 0.83 },
-  { date: "16", oee: 0.85 },
-  { date: "17", oee: 0.84 },
-  { date: "18", oee: 0.83 },
-  { date: "19", oee: 0.83 },
-  { date: "20", oee: 0.69 },
-  { date: "21", oee: 0.78 },
-  { date: "22", oee: 0.79 },
-  { date: "23", oee: 0.78 },
-  { date: "24", oee: 0.83 },
-  { date: "25", oee: 0.83 },
-  { date: "26", oee: 0.78 },
-  { date: "27", oee: 0.89 },
-  { date: "28", oee: 0.45 },
-  { date: "29", oee: 0.77 },
-  { date: "30", oee: 0.89 },
-  { date: "31", oee: 0.89 },
-]
-
 const chartConfig = {
   oee: {
     label: "OEE",

@@ -13,14 +13,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-const chartData = [
-  { category: "MOLDAGEM M15", oee: 0.5, fill: 'hsl(var(--chart-1))' },
-  { category: "MOLDAGEM M51", oee: 0.6, fill: 'hsl(var(--chart-1))' },
-  { category: "ACOPLAGEM M19", oee: 0.65, fill: 'hsl(var(--chart-1))' },
-  { category: "ACOPLAGEM M20", oee: 0.74, fill: 'hsl(var(--chart-1))' },
-  { category: "MONTAGEM 521", oee:0.75, fill: 'hsl(var(--chart-1))' },
-]
-
 export type TopFiveProcessChartData = {
   category: string;
   oee: number;

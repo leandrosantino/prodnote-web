@@ -1,5 +1,7 @@
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { db } from "@/repositories/database";
 import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
+import { collection, addDoc } from "firebase/firestore";
 import { inject, singleton } from "tsyringe";
 
 type CacheData = {
@@ -81,6 +83,29 @@ export class ListEfficiencyRecordCached {
 
   private setCachedData(cacheData: CacheData) {
     localStorage.setItem(this.storageKey, JSON.stringify(cacheData));
+  }
+
+  async migrate() {
+    try {
+      const targetCollection = collection(db, 'productionEfficiencyRecord');
+      const docs = this.getCachedData()
+      if (!docs) return
+      for (const doc of docs.data) {
+        await this.sleep(500)
+        await addDoc(targetCollection, doc);
+        console.log(`Documento ${doc.date.toLocaleDateString()} migrado com sucesso.`);
+      }
+    } catch (error) {
+      console.error("Erro ao migrar coleção:", error);
+    }
+  }
+
+  async sleep(time: number) {
+    return await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, time);
+    })
   }
 
 
