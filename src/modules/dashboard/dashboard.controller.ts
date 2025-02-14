@@ -9,8 +9,9 @@ import { inject, injectable } from "tsyringe";
 import { LossReasonChartData } from "./components/loss-reason-chart";
 import { TopFiveProcessChartData } from "./components/top-five-process-chart";
 import { DailyChartData } from "./components/daily-chart";
-import { isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
+import { ptBR } from "date-fns/locale";
 
 @injectable()
 export class DashboardController {
@@ -42,6 +43,8 @@ export class DashboardController {
   public areaFilterKey = useStateObject(0)
   public turnFilterKey = useStateObject(1)
 
+  public selectedMonthMame = useStateObject('')
+
   private lossReasonChartFill = 'hsl(var(--chart-2))'
   private topFiveProcessChartFill = 'hsl(var(--chart-1))'
 
@@ -70,6 +73,10 @@ export class DashboardController {
     ])
     useEffect(() => {
       if (this.dateFilter.value === undefined) this.dateFilter.set(new Date())
+    }, [this.dateFilter.value])
+    useEffect(() => {
+      if (!this.dateFilter.value) return
+      this.selectedMonthMame.set(format(this.dateFilter.value, 'MMMM', { locale: ptBR }))
     }, [this.dateFilter.value])
   }
 

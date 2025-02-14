@@ -29,7 +29,7 @@ export type DailyChartData = {
   oee: number;
 }
 
-export function DailyChart({ data }: {data: DailyChartData[]}) {
+export function DailyChart({ data, month }: {data: DailyChartData[], month: string }) {
   return (
     <Card className="max-h-full w-full rounded-md">
       <CardHeader>
@@ -57,15 +57,15 @@ export function DailyChart({ data }: {data: DailyChartData[]}) {
               content={<ChartTooltipContent
                 datatype="percent"
                 indicator="line"
-                labelFormatter={item => item + ' de Abril' }
+                labelFormatter={item => item + ' de ' + month }
                 valueFormat={(value: string) => `${(Number(value.replace(',', '.'))* 100).toFixed(1)}%`}
               />}
             />
             <ReferenceLine
-              y={0.83}
+              y={0.82}
               stroke="var(--color-goal)"
               strokeDasharray="3 3"
-              label={{ value: "Meta: 83%", position: "insideTopLeft", fill: "var(--color-goal)" }}
+              label={{ value: "Meta: 82%", position: "insideTopLeft", fill: "var(--color-goal)" }}
             />
             <Line
               dataKey="oee"

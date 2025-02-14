@@ -78,7 +78,7 @@ export function DashboardView({ controller }: props) {
         </div>
 
         <div className="w-full h-[250px]" >
-          <DailyChart data={controller.dailyChartData.value} />
+          <DailyChart data={controller.dailyChartData.value} month={controller.selectedMonthMame.value} />
         </div>
       </>}
 
