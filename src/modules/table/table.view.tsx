@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { TableController } from "./table.controller"
+import { TableController } from "./table.component"
 import { ArrowLeft, FilterX } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { flexRender } from "@tanstack/react-table"
@@ -10,11 +10,7 @@ import { AreaSelector } from "../../components/area-selector"
 import { TurnSelector } from "../../components/turn-selector"
 import { ProcessSelector } from "../../components/process-selector"
 
-type props = {
-  controller: TableController
-}
-
-export function TableView({ controller }: props){
+export function TableView(controller: TableController){
   return (
     <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-4 overflow-auto" >
       <div className="flex gap-2 items-center justify-between" >

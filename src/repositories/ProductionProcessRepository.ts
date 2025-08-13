@@ -1,11 +1,10 @@
 import { singleton } from "tsyringe";
-import { IProductionProcessRepository } from "./IProductionProcessRepository";
 import { ProductionProcess } from "@/entities/ProductionProcess";
 import { getDocs, query, collection, where, orderBy } from "firebase/firestore";
-import { db } from "../database";
+import { db } from "./database";
 
 @singleton()
-export class ProductionProcessRepository implements IProductionProcessRepository {
+export class ProductionProcessRepository {
 
   private cacheProcesses: ProductionProcess[] = []
 

@@ -1,10 +1,9 @@
 import { singleton } from "tsyringe";
-import { IReportService } from "./IReportService";
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { ClassificationTypes } from "@/entities/EfficiencyLoss";
 
 @singleton()
-export class ReportService implements IReportService {
+export class ReportService {
 
   calculateDailyChartData(data: EfficiencyRecord[]): Array<{ date: string; oee: number; }> {
     if (data.length < 1) return []

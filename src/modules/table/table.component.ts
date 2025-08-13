@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { inject, injectable } from "tsyringe";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import { inject } from "tsyringe";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState, Table } from "@tanstack/react-table";
 import { useStateObject } from "@/lib/useStateObject";
 import { tableColumns } from "./table-columns";
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { useEffect } from "react";
 import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
 import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { TableView } from "./table.view";
+import { ComponentView } from "@/lib/ComponentView";
 
-@injectable()
-export class TableController {
+@component(TableView)
+export class TableController extends ComponentController {
 
   private navigate = useNavigate()
   private sorting = useStateObject<SortingState>([])
@@ -47,6 +51,7 @@ export class TableController {
     @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
     @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
   ) {
+    super()
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])
     useEffect(() => { this.loadData() }, [])
     useEffect(() => this.startEfficiencyRecordListinner(), [])
@@ -126,3 +131,5 @@ export class TableController {
     this.navigate('/dashboard')
   }
 }
+
+export default TableController.View as ComponentView<TableController>

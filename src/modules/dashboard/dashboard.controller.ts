@@ -1,59 +1,63 @@
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
-import { useStateObject } from "@/lib/useStateObject";
-import type { IEfficiencyRecordService } from "@/services/efficiency-record/IEfficiencyRecordService";
-import type { IReportService } from "@/services/report-service/IReportService";
 import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
 import { LossReasonChartData } from "./components/loss-reason-chart";
 import { TopFiveProcessChartData } from "./components/top-five-process-chart";
 import { DailyChartData } from "./components/daily-chart";
 import { format, isSameDay } from "date-fns";
-import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
 import { ptBR } from "date-fns/locale";
+import { component } from "@/lib/@component";
+import { DashboardView } from "./dashborad.view";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
+import { EfficiencyRecordService } from "@/services/EfficiencyRecordService";
+import { ReportService } from "@/services/ReportService";
+import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
 
-@injectable()
-export class DashboardController {
+@component(DashboardView)
+export class DashboardController extends ComponentController {
 
   private navigate = useNavigate()
 
-  private data = useStateObject<EfficiencyRecord[]>([])
-  private dataFiltered = useStateObject<EfficiencyRecord[]>([])
-  private dataFilteredByMonth = useStateObject<EfficiencyRecord[]>([])
+  private data = this.useState<EfficiencyRecord[]>([])
+  private dataFiltered = this.useState<EfficiencyRecord[]>([])
+  private dataFilteredByMonth = this.useState<EfficiencyRecord[]>([])
 
-  public loading = useStateObject(true)
+  public loading = this.useState(true)
 
-  public oeeValue = useStateObject('--')
-  public totalOfBreakdowns = useStateObject('--')
-  public totalOfRework = useStateObject('--')
-  public totalOfScrap = useStateObject('--')
+  public oeeValue = this.useState('--')
+  public totalOfBreakdowns = this.useState('--')
+  public totalOfRework = this.useState('--')
+  public totalOfScrap = this.useState('--')
 
-  public lossReasonChartData = useStateObject<LossReasonChartData[]>([])
-  public topFiveProcessChartData = useStateObject<TopFiveProcessChartData[]>([])
-  public dailyChartData = useStateObject<DailyChartData[]>([])
+  public lossReasonChartData = this.useState<LossReasonChartData[]>([])
+  public topFiveProcessChartData = this.useState<TopFiveProcessChartData[]>([])
+  public dailyChartData = this.useState<DailyChartData[]>([])
 
-  public dateFilter = useStateObject<Date | undefined>(new Date())
-  public typeFilter = useStateObject<'month' | 'day'>('day')
-  public areaFilter = useStateObject<string | undefined>()
-  public turnFilter = useStateObject<string | undefined>()
-  public processFilter = useStateObject<string | undefined>()
-  public processes = useStateObject<string[]>([])
+  public dateFilter = this.useState<Date | undefined>(new Date())
+  public typeFilter = this.useState<'month' | 'day'>('day')
+  public areaFilter = this.useState<string | undefined>()
+  public turnFilter = this.useState<string | undefined>()
+  public processFilter = this.useState<string | undefined>()
+  public processes = this.useState<string[]>([])
 
-  public areaFilterKey = useStateObject(0)
-  public turnFilterKey = useStateObject(1)
+  public areaFilterKey = this.useState(0)
+  public turnFilterKey = this.useState(1)
 
-  public selectedMonthMame = useStateObject('')
+  public selectedMonthMame = this.useState('')
 
   private lossReasonChartFill = 'hsl(var(--chart-2))'
   private topFiveProcessChartFill = 'hsl(var(--chart-1))'
 
   constructor(
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: IEfficiencyRecordService,
+    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: EfficiencyRecordService,
     @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository,
-    @inject('ReportService') private readonly reportService: IReportService
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository,
+    @inject('ReportService') private readonly reportService: ReportService
   ) {
+    super()
     useEffect(() => { this.loadData() }, [])
     useEffect(() => { this.onChangeFilters() }, [this.data.value])
     useEffect(() => this.startEfficiencyRecordListinner(), [])
@@ -189,3 +193,5 @@ export class DashboardController {
   }
 
 }
+
+export default DashboardController.View as ComponentView<DashboardController>

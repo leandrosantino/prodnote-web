@@ -1,6 +1,6 @@
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { db } from "@/repositories/database";
-import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
+import { EfficiencyRecordRepository } from "@/repositories/EfficiencyRecordRepository";
 import { collection, addDoc } from "firebase/firestore";
 import { inject, singleton } from "tsyringe";
 
@@ -13,7 +13,7 @@ type CacheData = {
 export class ListEfficiencyRecordCached {
 
   constructor(
-    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: IEfficiencyRecordRepository,
+    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: EfficiencyRecordRepository,
   ) { }
 
   storageKey = 'efficiencyRecords'

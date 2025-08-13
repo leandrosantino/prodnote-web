@@ -12,11 +12,7 @@ import { TurnSelector } from "@/components/turn-selector"
 import { ProcessSelector } from "@/components/process-selector"
 import { ChartsSkeleton } from "./components/skeleton"
 
-type props = {
-  controller: DashboardController
-}
-
-export function DashboardView({ controller }: props) {
+export function DashboardView(controller: DashboardController) {
   return (
     <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-2 overflow-auto" >
 

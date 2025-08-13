@@ -1,18 +1,19 @@
 import { inject, singleton } from "tsyringe";
 import * as XLSX from 'xlsx';
 
-import { CreateEfficiencyRecordRequestDTO, CreateEfficiencyRecordResponseDTO, IEfficiencyRecordService } from "./IEfficiencyRecordService";
-import type { IEfficiencyRecordRepository } from "@/repositories/efficiency-record/IEfficiencyRecordRepository";
-import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
+
+
 import { classificationTypesMap, ClassificationTypes } from "@/entities/EfficiencyLoss";
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { CreateEfficiencyRecordRequestDTO, CreateEfficiencyRecordResponseDTO, EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { EfficiencyRecordRepository } from "@/repositories/EfficiencyRecordRepository";
+import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
 
 @singleton()
-export class EfficiencyRecordService implements IEfficiencyRecordService {
+export class EfficiencyRecordService {
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository,
-    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: IEfficiencyRecordRepository
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository,
+    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: EfficiencyRecordRepository
   ) { }
 
   async createRecord(efficiencyRecordData: CreateEfficiencyRecordRequestDTO): Promise<CreateEfficiencyRecordResponseDTO> {

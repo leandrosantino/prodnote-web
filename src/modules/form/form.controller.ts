@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,10 +9,14 @@ import { ProductionProcess } from "@/entities/ProductionProcess";
 import { useStateObject } from "@/lib/useStateObject";
 
 import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
-import type { IEfficiencyRecordService } from "@/services/efficiency-record/IEfficiencyRecordService";
+import type { IEfficiencyRecordService } from "@/services/efficiency-record/dto";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { FromView } from "./form.view";
+import { ComponentView } from "@/lib/ComponentView";
 
-@injectable()
-export class FormController {
+@component(FromView)
+export class FormController extends ComponentController {
 
   public form = useForm<OeeFormType>({
     resolver: zodResolver(oeeFormSchema),
@@ -35,6 +39,7 @@ export class FormController {
     @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository,
     @inject('EfficiencyRecordService') private readonly efficiencyRecordService: IEfficiencyRecordService
   ) {
+    super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
   }
@@ -94,6 +99,8 @@ export class FormController {
   }
 
 }
+
+export default FormController.View as ComponentView<FormController>
 
 // defaultValues: {
 //   piecesQuantity: 100,

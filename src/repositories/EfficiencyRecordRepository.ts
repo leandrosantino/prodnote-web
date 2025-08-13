@@ -1,15 +1,14 @@
 import { inject, singleton } from "tsyringe";
-import { IEfficiencyRecordRepository } from "./IEfficiencyRecordRepository";
 import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
 import { addDoc, collection, getDocs, orderBy, query, Timestamp, where, onSnapshot } from "firebase/firestore";
-import { db } from "../database";
-import type { IProductionProcessRepository } from "../production-process/IProductionProcessRepository";
+import { db } from "./database";
+import { ProductionProcessRepository } from "./ProductionProcessRepository";
 
 @singleton()
-export class EfficiencyRecordRepository implements IEfficiencyRecordRepository {
+export class EfficiencyRecordRepository {
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository
   ) { }
 
   private collectionName = 'productionEfficiencyRecord' //'teste' //

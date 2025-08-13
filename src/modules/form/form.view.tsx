@@ -6,11 +6,8 @@ import { Reasons } from './components/Reasons';
 import { FormController } from './form.controller';
 import { Container } from './components/Container';
 
-type props = {
-  controller: FormController
-}
 
-export function FromView({ controller }: props) {
+export function FromView(controller: FormController) {
 
   return (
     <Container loading={controller.processLoad.value} >

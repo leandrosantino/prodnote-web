@@ -66,3 +66,17 @@ export const oeeFormSchema = z.object({
 export type OeeFormType = z.infer<typeof oeeFormSchema>
 
 
+export type CreateEfficiencyRecordRequestDTO = OeeFormType & {
+  date: Date
+  ute: UteKeys
+}
+
+export type CreateEfficiencyRecordResponseDTO = {
+  processName: string
+  piecesQuantity: number
+  totalReasonsTime: number
+  totalScrap: number
+  totalRework: number
+  oee: number
+  ute: string
+}
