@@ -1,4 +1,4 @@
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,9 +21,9 @@ export class DashboardController extends ComponentController {
 
   private navigate = useNavigate()
 
-  private data = this.useState<EfficiencyRecord[]>([])
-  private dataFiltered = this.useState<EfficiencyRecord[]>([])
-  private dataFilteredByMonth = this.useState<EfficiencyRecord[]>([])
+  private data = this.useState<ProductionRegistry[]>([])
+  private dataFiltered = this.useState<ProductionRegistry[]>([])
+  private dataFilteredByMonth = this.useState<ProductionRegistry[]>([])
 
   public loading = this.useState(true)
 
@@ -96,15 +96,15 @@ export class DashboardController extends ComponentController {
       return
     }
     const selectedMonth = this.dateFilter.value?.getMonth()
-    const filteredByMonth: EfficiencyRecord[] = []
-    const filteredByDateRange: EfficiencyRecord[] = []
+    const filteredByMonth: ProductionRegistry[] = []
+    const filteredByDateRange: ProductionRegistry[] = []
     this.data.value.forEach((item) => {
       if (this.areaFilter.value && item.ute !== this.areaFilter.value) return
       if (this.turnFilter.value && item.turn !== this.turnFilter.value) return
-      if (this.processFilter.value && item.productionProcessId !== this.processFilter.value) return
-      if (item.date.getMonth() === selectedMonth) filteredByMonth.push(item)
-      if (this.typeFilter.value === 'day' && isSameDay(item.date, this.dateFilter.value as Date)) filteredByDateRange.push(item)
-      if (this.typeFilter.value === 'month' && item.date.getMonth() === selectedMonth) filteredByDateRange.push(item)
+      if (this.processFilter.value && item.process_id !== this.processFilter.value) return
+      if (item.created_at.getMonth() === selectedMonth) filteredByMonth.push(item)
+      if (this.typeFilter.value === 'day' && isSameDay(item.created_at, this.dateFilter.value as Date)) filteredByDateRange.push(item)
+      if (this.typeFilter.value === 'month' && item.created_at.getMonth() === selectedMonth) filteredByDateRange.push(item)
 
     })
     this.dataFilteredByMonth.set(filteredByMonth)

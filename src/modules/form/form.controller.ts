@@ -4,16 +4,18 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { hourIntervals, oeeFormSchema, OeeFormType, UteKeys, utePattern } from "@/entities/EfficiencyRecord";
-import { ProductionProcess } from "@/entities/ProductionProcess";
+import { Process } from "@/entities/Process";
 import { useStateObject } from "@/lib/useStateObject";
 
-import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
-import type { IEfficiencyRecordService } from "@/services/efficiency-record/dto";
 import { component } from "@/lib/@component";
 import { ComponentController } from "@/lib/ComponentController";
 import { FromView } from "./form.view";
 import { ComponentView } from "@/lib/ComponentView";
+import { hourIntervals } from "@/entities/HoursIntervals";
+import { OeeFormType, oeeFormSchema } from "@/entities/OeeForm";
+import { UteKeys, utePattern } from "@/entities/Ute";
+import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
+import { EfficiencyRecordService } from "@/services/EfficiencyRecordService";
 
 @component(FromView)
 export class FormController extends ComponentController {
@@ -29,15 +31,15 @@ export class FormController extends ComponentController {
 
   public intervals = useStateObject<string[]>(hourIntervals as any)
   public loading = useStateObject(false)
-  public processes = useStateObject<ProductionProcess[]>([])
+  public processes = useStateObject<Process[]>([])
   public processLoad = useStateObject(false)
 
   private navigate = useNavigate()
   private routeParams = useParams<{ ute: UteKeys }>()
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository,
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: IEfficiencyRecordService
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository,
+    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: EfficiencyRecordService
   ) {
     super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])

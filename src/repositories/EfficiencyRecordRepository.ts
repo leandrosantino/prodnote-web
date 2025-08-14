@@ -1,79 +1,66 @@
-import { inject, singleton } from "tsyringe";
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
-import { addDoc, collection, getDocs, orderBy, query, Timestamp, where, onSnapshot } from "firebase/firestore";
-import { db } from "./database";
-import { ProductionProcessRepository } from "./ProductionProcessRepository";
+import { singleton } from "tsyringe";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { supabase } from "./supabase";
 
 @singleton()
 export class EfficiencyRecordRepository {
 
-  constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository
-  ) { }
+  static tableName = 'production_registry'
 
-  private collectionName = 'productionEfficiencyRecord' //'teste' //
+  async create(data: ProductionRegistry): Promise<void> {
+    const a = Object.assign({}, data) as any
+    delete a.id
+    delete a.created_at
+    delete a.process
+    delete a.production_losses
 
-  async create(data: EfficiencyRecord): Promise<void> {
-    await addDoc(collection(db, this.collectionName), data)
-  }
+    const { data: registry, error: registryError } = await supabase
+      .from(EfficiencyRecordRepository.tableName)
+      .insert([])
+      .select()
+      .single()
 
-  async getAll(): Promise<EfficiencyRecord[]> {
-    const querySnapshot = await getDocs(query(
-      collection(db, this.collectionName),
-      orderBy('date', 'desc')
-    ))
-    let docData = querySnapshot.docs.map(doc => doc.data()) as EfficiencyRecord[]
-    const data = []
-    for (const { date, productionProcessId, ...rest } of docData) {
-      const process = await this.productionProcessRepository.getById(productionProcessId)
-      data.push({
-        date: (date as unknown as Timestamp).toDate(),
-        productionProcessId: process?.description ?? '',
-        ...rest
-      })
+    if (registryError) throw registryError
+    if (losses.length > 0) {
+      const { error: lossesError } = await supabase
+        .from('ProductionLosses')
+        .insert(data.losses.map(loss => ({
+          ...loss,
+          production_registry_id: registry.id
+        })))
+
+      if (lossesError) throw lossesError
     }
-    return data
+
+    return
   }
 
-  async findMany(filters: { date: Date; operator: "<" | ">" | "=="; }): Promise<EfficiencyRecord[]> {
-    const querySnapshot = await getDocs(query(
-      collection(db, this.collectionName),
-      where('date', '>', filters.date),
-      orderBy('date', 'desc')
-    ))
-    let docData = querySnapshot.docs.map(doc => doc.data()) as EfficiencyRecord[]
-    const data = []
-    for (const { date, productionProcessId, ...rest } of docData) {
-      const process = await this.productionProcessRepository.getById(productionProcessId)
-      data.push({
-        date: (date as unknown as Timestamp).toDate(),
-        productionProcessId: process?.description ?? '',
-        ...rest
-      })
-    }
-    return data
-  }
+  async findMany(filters: Filters = {}): Promise<ProductionRegistry[]> {
+    let q = supabase
+      .from(EfficiencyRecordRepository.tableName)
+      .select<string, ProductionRegistry>(`*, process (*), production_losses (*)`);
 
-  onCreate(cb: (data: EfficiencyRecord) => void): () => void {
-    const itemsRef = query(
-      collection(db, this.collectionName),
-      where('date', '>', new Date())
-    )
-    return onSnapshot(itemsRef, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          const { date, productionProcessId, ...rest } = change.doc.data() as EfficiencyRecord
-          this.productionProcessRepository.getById(productionProcessId)
-            .then(process => {
-              cb({
-                date: (date as unknown as Timestamp).toDate(),
-                productionProcessId: process?.description ?? '',
-                ...rest
-              })
-            })
-        }
-      })
-    })
+    if (filters.createdAtStart) q = q.gte('created_at', filters.createdAtStart);
+    if (filters.createdAtEnd) q = q.lte('created_at', filters.createdAtEnd);
+    if (filters.process_id) q = q.eq('process_id', filters.process_id);
+    if (filters.turn) q = q.eq('turn', filters.turn);
+    if (filters.project) q = q.ilike('project', `%${filters.project}%`);
+    if (filters.ute) q = q.eq('process.ute', filters.ute);
+
+    const { data, error } = await q;
+    if (error) throw new Error(`Error fetching data: ${error.message}`);
+
+    return data.map(item => new ProductionRegistry(item));
   }
 
 }
+
+
+type Filters = {
+  createdAtStart?: string;
+  createdAtEnd?: string;
+  process_id?: number;
+  turn?: string;
+  project?: string;
+  ute?: string;
+};

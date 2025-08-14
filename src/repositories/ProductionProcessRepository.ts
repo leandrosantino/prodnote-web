@@ -1,34 +1,34 @@
 import { singleton } from "tsyringe";
-import { ProductionProcess } from "@/entities/ProductionProcess";
+import { Process } from "@/entities/Process";
 import { getDocs, query, collection, where, orderBy } from "firebase/firestore";
 import { db } from "./database";
 
 @singleton()
 export class ProductionProcessRepository {
 
-  private cacheProcesses: ProductionProcess[] = []
+  private cacheProcesses: Process[] = []
 
-  async getById(id: ProductionProcess['id']): Promise<ProductionProcess | null> {
+  async getById(id: Process['id']): Promise<Process | null> {
     if (this.cacheProcesses.length === 0) await this.getAll()
     return this.cacheProcesses.find(item => item.id == id) ?? null
   }
 
-  async getByUte(ute: ProductionProcess["ute"]): Promise<ProductionProcess[]> {
+  async getByUte(ute: Process["ute"]): Promise<Process[]> {
     const querySnapshot = await getDocs(query(
       collection(db, 'process'),
       where('ute', '==', ute),
       orderBy('id', 'asc')
     ))
-    return querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
+    return querySnapshot.docs.map(doc => doc.data()) as Process[];
   }
 
-  async getAll(): Promise<ProductionProcess[]> {
+  async getAll(): Promise<Process[]> {
     if (this.cacheProcesses.length === 0) {
       const querySnapshot = await getDocs(query(
         collection(db, 'process'),
         orderBy('id', 'asc')
       ))
-      this.cacheProcesses = querySnapshot.docs.map(doc => doc.data()) as ProductionProcess[];
+      this.cacheProcesses = querySnapshot.docs.map(doc => doc.data()) as Process[];
     }
     return this.cacheProcesses
   }

@@ -3,14 +3,14 @@ import { inject } from "tsyringe";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState, Table } from "@tanstack/react-table";
 import { useStateObject } from "@/lib/useStateObject";
 import { tableColumns } from "./table-columns";
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { useEffect } from "react";
-import type { IProductionProcessRepository } from "@/repositories/production-process/IProductionProcessRepository";
 import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 import { component } from "@/lib/@component";
 import { ComponentController } from "@/lib/ComponentController";
 import { TableView } from "./table.view";
 import { ComponentView } from "@/lib/ComponentView";
+import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
 
 @component(TableView)
 export class TableController extends ComponentController {
@@ -18,7 +18,7 @@ export class TableController extends ComponentController {
   private navigate = useNavigate()
   private sorting = useStateObject<SortingState>([])
   private columnFilters = useStateObject<ColumnFiltersState>([])
-  private data = useStateObject<EfficiencyRecord[]>([])
+  private data = useStateObject<ProductionRegistry[]>([])
 
   public dateFilter = useStateObject<Date | undefined>()
   public areaFilter = useStateObject<string | undefined>()
@@ -49,7 +49,7 @@ export class TableController extends ComponentController {
 
   constructor(
     @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: IProductionProcessRepository
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository
   ) {
     super()
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])

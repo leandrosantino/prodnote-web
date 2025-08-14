@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,  } from "@/components/ui/select";
-import { uteKeysList } from "@/entities/EfficiencyRecord";
+import { uteKeysList } from "@/entities/ProductionRegistry";
 
 
 type props = {

@@ -1,7 +1,7 @@
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const tableColumns: ColumnDef<EfficiencyRecord>[] = [
+export const tableColumns: ColumnDef<ProductionRegistry>[] = [
   {
     accessorKey: "date",
     header: () => <div className='w-32' >Data</div>,

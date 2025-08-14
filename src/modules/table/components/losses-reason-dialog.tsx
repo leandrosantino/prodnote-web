@@ -7,10 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord"
+import { ProductionRegistry } from "@/entities/ProductionRegistry"
 import { ReactNode } from "react"
 
-export function LossesReasonDialog({ children, efficiencyRecord }: {children: ReactNode, efficiencyRecord: EfficiencyRecord}) {
+export function LossesReasonDialog({ children, efficiencyRecord }: {children: ReactNode, efficiencyRecord: ProductionRegistry}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -20,16 +20,16 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
         <DialogHeader>
           <DialogTitle>Perdas de Eficiência</DialogTitle>
           <DialogDescription>
-            {efficiencyRecord.date.toLocaleDateString()} - {efficiencyRecord.hourInterval} - {efficiencyRecord.productionProcessId}
+            {efficiencyRecord.created_at.toLocaleDateString()} - {efficiencyRecord.time_tag} - {efficiencyRecord.process_id}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 overflow-auto max-h-[300px]">
           {
-            efficiencyRecord.productionEfficiencyLosses.length === 0 ?
+            efficiencyRecord.production_losses.length === 0 ?
             <>
               <span className="text-muted-foreground w-full h-[200px] flex justify-center items-center" >Nenhuma perda apontada...</span>
             </> :
-            efficiencyRecord.productionEfficiencyLosses.map((item, index) => (
+            efficiencyRecord.production_losses.map((item, index) => (
               <Card key={index} >
                 <CardHeader>
                   <CardTitle>{item.cause ?? item.classification}</CardTitle>
@@ -37,7 +37,7 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
                 <CardContent>
                   <p>{item.description}</p>
                   <p>
-                    Tempo: <span className="font-medium" > {item.lostTimeInMinutes.toFixed(0)} min </span>
+                    Tempo: <span className="font-medium" > {item.time.toFixed(0)} min </span>
                   </p>
                 </CardContent>
               </Card>

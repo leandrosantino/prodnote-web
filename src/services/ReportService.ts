@@ -1,11 +1,11 @@
 import { singleton } from "tsyringe";
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
-import { ClassificationTypes } from "@/entities/EfficiencyLoss";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { ClassificationTypes } from "@/entities/ProductionLosses";
 
 @singleton()
 export class ReportService {
 
-  calculateDailyChartData(data: EfficiencyRecord[]): Array<{ date: string; oee: number; }> {
+  calculateDailyChartData(data: ProductionRegistry[]): Array<{ date: string; oee: number; }> {
     if (data.length < 1) return []
     const grouped: Array<{ usefulTimeInMunites: number, productionTimeInMinutes: number }> = []
 
@@ -15,9 +15,9 @@ export class ReportService {
     })
 
     data.forEach(item => {
-      const day = item.date.getDate() - 1
-      grouped[day].usefulTimeInMunites += item.oeeValue * item.productionTimeInMinutes
-      grouped[day].productionTimeInMinutes += item.productionTimeInMinutes
+      const day = item.created_at.getDate() - 1
+      grouped[day].usefulTimeInMunites += item.oeeValue * item.interval_in_minutes
+      grouped[day].productionTimeInMinutes += item.interval_in_minutes
     })
 
     const formated = grouped.map(({ productionTimeInMinutes, usefulTimeInMunites }, index) => {
@@ -29,7 +29,7 @@ export class ReportService {
     return formated;
   }
 
-  calculateTopFiveProcessChartData(data: EfficiencyRecord[]): Array<{ class: string; oee: number; }> {
+  calculateTopFiveProcessChartData(data: ProductionRegistry[]): Array<{ class: string; oee: number; }> {
     if (data.length < 1) return []
     const grouped: Record<string, {
       usefulTimeInMunites: number
@@ -37,14 +37,14 @@ export class ReportService {
     }> = {}
 
     data.forEach(item => {
-      if (item.productionProcessId in grouped) {
-        grouped[item.productionProcessId].usefulTimeInMunites += item.oeeValue * item.productionTimeInMinutes,
-          grouped[item.productionProcessId].productionTimeInMinutes += item.productionTimeInMinutes
+      if (item.process_id in grouped) {
+        grouped[item.process_id].usefulTimeInMunites += item.oeeValue * item.interval_in_minutes,
+          grouped[item.process_id].productionTimeInMinutes += item.interval_in_minutes
         return
       }
-      grouped[item.productionProcessId] = {
-        usefulTimeInMunites: item.oeeValue * item.productionTimeInMinutes,
-        productionTimeInMinutes: item.productionTimeInMinutes
+      grouped[item.process_id] = {
+        usefulTimeInMunites: item.oeeValue * item.interval_in_minutes,
+        productionTimeInMinutes: item.interval_in_minutes
       }
     })
 
@@ -57,7 +57,7 @@ export class ReportService {
     return formated.sort((a, b) => a.oee - b.oee).slice(0, 5)
   }
 
-  calculatelossReasonChartData(data: EfficiencyRecord[]): Array<{ class: ClassificationTypes; timeInHours: number; }> {
+  calculatelossReasonChartData(data: ProductionRegistry[]): Array<{ class: ClassificationTypes; timeInHours: number; }> {
     if (data.length < 1) return [];
     type a = ClassificationTypes | 'Micro paradas'
     const grouped: Record<a, number> = {
@@ -76,10 +76,10 @@ export class ReportService {
       'Micro paradas': 0
     }
 
-    data.forEach(({ productionEfficiencyLosses }) => {
+    data.forEach(({ production_losses: productionEfficiencyLosses }) => {
       productionEfficiencyLosses.forEach((loss) => {
         if (loss.cause in grouped) {
-          grouped[loss.cause as a] += loss.lostTimeInMinutes
+          grouped[loss.cause as a] += loss.time
         }
       })
     })
@@ -92,34 +92,34 @@ export class ReportService {
     return formated
   }
 
-  calculateTotalOfBreakdowns(data: EfficiencyRecord[]): number {
+  calculateTotalOfBreakdowns(data: ProductionRegistry[]): number {
     if (data.length < 1) return 0;
     let count = 0
     let totalOfProductionTimeInMinutes = 0
-    data.forEach(({ productionEfficiencyLosses, productionTimeInMinutes }) => {
+    data.forEach(({ production_losses: productionEfficiencyLosses, interval_in_minutes: productionTimeInMinutes }) => {
       totalOfProductionTimeInMinutes += productionTimeInMinutes
-      productionEfficiencyLosses.forEach(({ lostTimeInMinutes, ...loss }) => {
+      productionEfficiencyLosses.forEach(({ time: lostTimeInMinutes, ...loss }) => {
         if (loss.cause === 'Máquina quebrada') count += lostTimeInMinutes
       })
     })
     return count / totalOfProductionTimeInMinutes * 100
   }
 
-  calculateTotalOfScrap(data: EfficiencyRecord[]): number {
+  calculateTotalOfScrap(data: ProductionRegistry[]): number {
     if (data.length < 1) return 0;
 
     const scrapLossesTimes: number[] = []
     const qualityLossesTimes: number[] = []
     const usefulTimes: number[] = []
 
-    data.forEach(({ productionEfficiencyLosses, oeeValue, productionTimeInMinutes }) => {
+    data.forEach(({ production_losses: productionEfficiencyLosses, oeeValue, interval_in_minutes: productionTimeInMinutes }) => {
       usefulTimes.push(oeeValue * productionTimeInMinutes)
       productionEfficiencyLosses.forEach((loss) => {
         if (loss.cause === 'Refugo') {
-          scrapLossesTimes.push(loss.lostTimeInMinutes)
-          qualityLossesTimes.push(loss.lostTimeInMinutes)
+          scrapLossesTimes.push(loss.time)
+          qualityLossesTimes.push(loss.time)
         }
-        if (loss.cause === 'Retrabalho') qualityLossesTimes.push(loss.lostTimeInMinutes)
+        if (loss.cause === 'Retrabalho') qualityLossesTimes.push(loss.time)
       })
     })
 
@@ -130,21 +130,21 @@ export class ReportService {
     return (totalOfScrapLostTimeInMinutes / (totalOfQualityLostTimeInMinutes + totalOfUsefulTimeInMinutes)) * 100
   }
 
-  calculateTotalOfRework(data: EfficiencyRecord[]): number {
+  calculateTotalOfRework(data: ProductionRegistry[]): number {
     if (data.length < 1) return 0;
 
     const scrapLossesTimes: number[] = []
     const qualityLossesTimes: number[] = []
     const usefulTimes: number[] = []
 
-    data.forEach(({ productionEfficiencyLosses, oeeValue, productionTimeInMinutes }) => {
+    data.forEach(({ production_losses: productionEfficiencyLosses, oeeValue, interval_in_minutes: productionTimeInMinutes }) => {
       usefulTimes.push(oeeValue * productionTimeInMinutes)
       productionEfficiencyLosses.forEach((loss) => {
         if (loss.cause === 'Retrabalho') {
-          scrapLossesTimes.push(loss.lostTimeInMinutes)
-          qualityLossesTimes.push(loss.lostTimeInMinutes)
+          scrapLossesTimes.push(loss.time)
+          qualityLossesTimes.push(loss.time)
         }
-        if (loss.cause === 'Refugo') qualityLossesTimes.push(loss.lostTimeInMinutes)
+        if (loss.cause === 'Refugo') qualityLossesTimes.push(loss.time)
       })
     })
 
@@ -155,9 +155,9 @@ export class ReportService {
     return (totalOfScrapLostTimeInMinutes / (totalOfQualityLostTimeInMinutes + totalOfUsefulTimeInMinutes)) * 100
   }
 
-  caculateOeeValue(data: EfficiencyRecord[]): number {
+  caculateOeeValue(data: ProductionRegistry[]): number {
     if (data.length < 1) return 0;
-    const grouped = data.map(({ productionTimeInMinutes, oeeValue }) => ({
+    const grouped = data.map(({ interval_in_minutes: productionTimeInMinutes, oeeValue }) => ({
       usefulTimeInMunites: oeeValue * productionTimeInMinutes,
       productionTimeInMinutes
     }))

@@ -1,11 +1,11 @@
-import { EfficiencyRecord } from "@/entities/EfficiencyRecord";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { db } from "@/repositories/database";
 import { EfficiencyRecordRepository } from "@/repositories/EfficiencyRecordRepository";
 import { collection, addDoc } from "firebase/firestore";
 import { inject, singleton } from "tsyringe";
 
 type CacheData = {
-  data: EfficiencyRecord[]
+  data: ProductionRegistry[]
   expiresIn: number
 }
 
@@ -28,7 +28,7 @@ export class ListEfficiencyRecordCached {
     }
 
     if (cachedData.expiresIn <= now) {
-      const lastId = cachedData.data[0].date
+      const lastId = cachedData.data[0].created_at
       const newData = await this.efficiencyRecordRepository.findMany({
         operator: '>',
         date: lastId
@@ -59,7 +59,7 @@ export class ListEfficiencyRecordCached {
     return this.revalidate(data)
   }
 
-  private async revalidate(data: EfficiencyRecord[]) {
+  private async revalidate(data: ProductionRegistry[]) {
     const expiresIn = this.getNewExpiresTime()
     this.setCachedData({ data, expiresIn })
     return data
@@ -75,7 +75,7 @@ export class ListEfficiencyRecordCached {
     if (!cachedData) return null
     const { data, expiresIn } = JSON.parse(cachedData) as CacheData
     data.map(item => {
-      item.date = new Date(item.date)
+      item.created_at = new Date(item.created_at)
       return item
     })
     return { data, expiresIn }
@@ -93,7 +93,7 @@ export class ListEfficiencyRecordCached {
       for (const doc of docs.data) {
         await this.sleep(500)
         await addDoc(targetCollection, doc);
-        console.log(`Documento ${doc.date.toLocaleDateString()} migrado com sucesso.`);
+        console.log(`Documento ${doc.created_at.toLocaleDateString()} migrado com sucesso.`);
       }
     } catch (error) {
       console.error("Erro ao migrar coleção:", error);
