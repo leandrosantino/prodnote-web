@@ -1,7 +1,7 @@
 import { CircleCheckBig } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect } from "react"
-import { CreateEfficiencyRecordResponseDTO } from "@/services/efficiency-record/dto"
+import { CreateEfficiencyRecordResponseDTO } from "@/entities/OeeForm"
 
 export function Success(){
 

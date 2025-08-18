@@ -27,7 +27,7 @@ export type ClassificationTypes = keyof typeof classificationTypesMap
 export interface ProductionLosses {
   id?: number
   production_registry_id?: number
-  classification: string
+  classification: typeof classificationTypesList[number]
   cause: string
   description: string
   time: number

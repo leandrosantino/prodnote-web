@@ -7,7 +7,7 @@ export class ProcessRepository {
 
   async getById(id: number): Promise<Process | null> {
     const { data, error } = await supabase
-      .from("Process")
+      .from("process")
       .select("*")
       .eq("id", id)
       .single<Process>();
@@ -18,7 +18,7 @@ export class ProcessRepository {
 
   async getByUte(ute: string): Promise<Process[]> {
     const { data, error } = await supabase
-      .from("Process")
+      .from("process")
       .select<string, Process>("*")
       .eq("ute", ute);
 
@@ -28,7 +28,7 @@ export class ProcessRepository {
 
   async getAll(): Promise<Process[]> {
     const { data, error } = await supabase
-      .from("Process")
+      .from("process")
       .select<string, Process>("*");
 
     if (error) throw error;

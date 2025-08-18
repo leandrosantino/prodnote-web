@@ -1,7 +1,7 @@
 import { UteKeys } from "./Ute"
 
 export interface Process {
-  id: string
+  id: number
   description: string
   target: number
   ute: UteKeys

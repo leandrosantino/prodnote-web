@@ -12,7 +12,7 @@ import { component } from "@/lib/@component";
 import { DashboardView } from "./dashborad.view";
 import { ComponentController } from "@/lib/ComponentController";
 import { ComponentView } from "@/lib/ComponentView";
-import { ProductionRegistryService } from "@/services/EfficiencyRecordService";
+import { ProductionRegistryService } from "@/services/ProductionRegistryService";
 import { ReportService } from "@/services/ReportService";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 

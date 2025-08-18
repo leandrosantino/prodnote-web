@@ -3,32 +3,34 @@ import * as XLSX from 'xlsx';
 import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
 import { OeeForm } from "@/entities/OeeForm";
 import { ProductionRegistry } from "@/entities/ProductionRegistry";
-import { ProductionLosses } from "@/entities/ProductionLosses";
+import { ProcessRepository } from "@/repositories/ProcessRepository";
 
 @singleton()
 export class ProductionRegistryService {
 
   constructor(
-    @inject('EfficiencyRecordRepository') private readonly productionRegistryRepository: ProductionRegistryRepository
+    @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
+    @inject('ProcessRepository') private readonly processRepository: ProcessRepository
   ) { }
 
   async createRecord(formData: OeeForm) {
-    const interval_in_minutes = 60
-    const production_losses: ProductionLosses[] = []
+    const productionregistry = ProductionRegistry.fromOeeForm(formData);
 
-    const productionregistry = new ProductionRegistry({
-      process_id: formData.process,
-      interval_in_minutes,
-      pieces_quantity: formData.piecesQuantity,
-      production_losses,
-      project: '',
-      time_tag: formData.hourInterval,
-      turn: formData.turn
+    const process = await this.processRepository.getById(productionregistry.process_id);
+
+    if (!process) return
+
+    productionregistry.production_losses.forEach(item => {
+      if (item.classification === 'Scrap + Quality Issues') {
+        item.time = ProductionRegistry.convertPiecesToLostTime({
+          pieces_quantity: item.time,
+          target: process.target
+        })
+      }
     })
 
     await this.productionRegistryRepository.create(productionregistry.createData)
-
-
+    return productionregistry;
   }
 
   async exportToExcel(): Promise<void> {

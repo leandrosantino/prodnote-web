@@ -1,6 +1,7 @@
-import { ProductionLosses } from "./ProductionLosses"
+import { ClassificationTypes, classificationTypesMap, ProductionLosses } from "./ProductionLosses"
 import { Process } from "./Process"
 import { HourIntervals } from "./HoursIntervals"
+import { OeeForm } from "./OeeForm"
 
 const MINUTES_IN_HOUR = 60
 
@@ -10,7 +11,7 @@ export class ProductionRegistry {
   created_at!: Date
   process!: Process
 
-  process_id!: string
+  process_id!: number
   project!: string
   turn!: string
   pieces_quantity!: number
@@ -58,6 +59,36 @@ export class ProductionRegistry {
 
   static calculateLostTime({ pieces_quantity, interval_in_minutes, target }: CalculateVariables) {
     return interval_in_minutes - (MINUTES_IN_HOUR * pieces_quantity) / target
+  }
+
+  static convertPiecesToLostTime({ pieces_quantity, target }: { pieces_quantity: number, target: number }) {
+    return (MINUTES_IN_HOUR * pieces_quantity) / target
+  }
+
+  static convertLostTimeToPieces({ lost_time, target }: { lost_time: number, target: number }) {
+    return lost_time * target / MINUTES_IN_HOUR
+  }
+
+  static fromOeeForm(formData: OeeForm) {
+    let interval_in_minutes = 60;
+    if (formData.hourInterval === '15:00-15:48') interval_in_minutes = 48
+    if (formData.hourInterval === '15:49-15:59') interval_in_minutes = 10
+
+    return new ProductionRegistry({
+      process_id: Number(formData.process),
+      interval_in_minutes,
+      pieces_quantity: formData.piecesQuantity,
+      project: '',
+      time_tag: formData.hourInterval,
+      turn: formData.turn,
+      production_losses: formData.reasons
+        .map(item => ({
+          classification: classificationTypesMap[item.class as ClassificationTypes],
+          description: item.description,
+          cause: item.class,
+          time: item.time
+        }))
+    })
   }
 
 }

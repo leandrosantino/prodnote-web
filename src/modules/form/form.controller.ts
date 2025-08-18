@@ -15,7 +15,7 @@ import { hourIntervals } from "@/entities/HoursIntervals";
 import { OeeForm, oeeFormSchema } from "@/entities/OeeForm";
 import { UteKeys, utePattern } from "@/entities/Ute";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
-import { ProductionRegistryService } from "@/services/EfficiencyRecordService";
+import { ProductionRegistryService } from "@/services/ProductionRegistryService";
 
 @component(FromView)
 export class FormController extends ComponentController {
@@ -38,8 +38,8 @@ export class FormController extends ComponentController {
   private routeParams = useParams<{ ute: UteKeys }>()
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository,
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: ProductionRegistryService
+    @inject('ProcessRepository') private readonly processRepository: ProcessRepository,
+    @inject('ProductionRegistryService') private readonly productionRegistryService: ProductionRegistryService
   ) {
     super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
@@ -62,7 +62,7 @@ export class FormController extends ComponentController {
     this.processLoad.set(true)
     if (!this.routeParams.ute) return
     if (!utePattern.test(this.routeParams.ute)) return
-    this.productionProcessRepository.getByUte(this.routeParams.ute)
+    this.processRepository.getByUte(this.routeParams.ute)
       .then(data => {
         this.processes.set(data)
         this.processLoad.set(false)
@@ -80,7 +80,7 @@ export class FormController extends ComponentController {
       return
     }
 
-    this.efficiencyRecordService.createRecord(data)
+    this.productionRegistryService.createRecord(data)
       .then(resp => {
         this.navigate('/success', { state: resp })
       })
