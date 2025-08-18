@@ -1,43 +1,35 @@
 import { singleton } from "tsyringe";
-import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { ProductionRegistry, ProductionRegistryCreateDto } from "@/entities/ProductionRegistry";
 import { supabase } from "./supabase";
 
 @singleton()
-export class EfficiencyRecordRepository {
+export class ProductionRegistryRepository {
 
   static tableName = 'production_registry'
 
-  async create(data: ProductionRegistry): Promise<void> {
-    const a = Object.assign({}, data) as any
-    delete a.id
-    delete a.created_at
-    delete a.process
-    delete a.production_losses
-
+  async create({ registryData, production_losses }: ProductionRegistryCreateDto): Promise<void> {
     const { data: registry, error: registryError } = await supabase
-      .from(EfficiencyRecordRepository.tableName)
-      .insert([])
+      .from(ProductionRegistryRepository.tableName)
+      .insert([registryData])
       .select()
-      .single()
+      .single<ProductionRegistry>()
 
     if (registryError) throw registryError
-    if (losses.length > 0) {
+
+    if (production_losses.length > 0) {
+      production_losses.forEach(loss => { loss.production_registry_id = registry.id })
+
       const { error: lossesError } = await supabase
-        .from('ProductionLosses')
-        .insert(data.losses.map(loss => ({
-          ...loss,
-          production_registry_id: registry.id
-        })))
+        .from('production_losses')
+        .insert(production_losses)
 
       if (lossesError) throw lossesError
     }
-
-    return
   }
 
   async findMany(filters: Filters = {}): Promise<ProductionRegistry[]> {
     let q = supabase
-      .from(EfficiencyRecordRepository.tableName)
+      .from(ProductionRegistryRepository.tableName)
       .select<string, ProductionRegistry>(`*, process (*), production_losses (*)`);
 
     if (filters.createdAtStart) q = q.gte('created_at', filters.createdAtStart);
@@ -54,7 +46,6 @@ export class EfficiencyRecordRepository {
   }
 
 }
-
 
 type Filters = {
   createdAtStart?: string;

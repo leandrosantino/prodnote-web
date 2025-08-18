@@ -12,9 +12,9 @@ import { component } from "@/lib/@component";
 import { DashboardView } from "./dashborad.view";
 import { ComponentController } from "@/lib/ComponentController";
 import { ComponentView } from "@/lib/ComponentView";
-import { EfficiencyRecordService } from "@/services/EfficiencyRecordService";
+import { ProductionRegistryService } from "@/services/EfficiencyRecordService";
 import { ReportService } from "@/services/ReportService";
-import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
+import { ProcessRepository } from "@/repositories/ProcessRepository";
 
 @component(DashboardView)
 export class DashboardController extends ComponentController {
@@ -52,9 +52,9 @@ export class DashboardController extends ComponentController {
   private topFiveProcessChartFill = 'hsl(var(--chart-1))'
 
   constructor(
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: EfficiencyRecordService,
+    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: ProductionRegistryService,
     @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository,
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository,
     @inject('ReportService') private readonly reportService: ReportService
   ) {
     super()

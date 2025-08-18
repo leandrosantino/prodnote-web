@@ -4,27 +4,22 @@ import { LabView } from "./lab.vew";
 import { ComponentView } from "@/lib/ComponentView";
 import { useEffect } from "react";
 import { inject } from "tsyringe";
-import { EfficiencyRecordRepository } from "@/repositories/EfficiencyRecordRepository";
-import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
+import { ProcessRepository } from "@/repositories/ProcessRepository";
 
 @component(LabView)
 export class LabController extends ComponentController {
   constructor(
-    @inject('EfficiencyRecordRepository') private readonly efficiencyRecordRepository: EfficiencyRecordRepository
+    @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
+    @inject('ProcessRepository') private readonly processRepository: ProcessRepository
   ) {
     super();
     useEffect(() => {
       (async () => {
-        const data = await this.efficiencyRecordRepository.findMany()
+        const data = await this.processRepository.getAll();
 
-        console.log('Process Data:', JSON.stringify(data, null, 2))
-        console.log('Oee:', data[0].oee)
-        console.log('lostTime:', data[0].lostTime)
+        console.log('Processes:', data);
 
-        const a = data[0]
-
-        const b = Object.assign({}, a)
-        console.log('teste: ', a)
       })()
     })
 

@@ -14,13 +14,8 @@ export const oeeFormSchema = z.object({
   }))
 })
 
-export type OeeFormType = z.infer<typeof oeeFormSchema>
+export type OeeForm = z.infer<typeof oeeFormSchema>
 
-
-export type CreateEfficiencyRecordRequestDTO = OeeFormType & {
-  date: Date
-  ute: UteKeys
-}
 
 export type CreateEfficiencyRecordResponseDTO = {
   processName: string

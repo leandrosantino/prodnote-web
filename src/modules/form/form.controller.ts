@@ -12,15 +12,15 @@ import { ComponentController } from "@/lib/ComponentController";
 import { FromView } from "./form.view";
 import { ComponentView } from "@/lib/ComponentView";
 import { hourIntervals } from "@/entities/HoursIntervals";
-import { OeeFormType, oeeFormSchema } from "@/entities/OeeForm";
+import { OeeForm, oeeFormSchema } from "@/entities/OeeForm";
 import { UteKeys, utePattern } from "@/entities/Ute";
-import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
-import { EfficiencyRecordService } from "@/services/EfficiencyRecordService";
+import { ProcessRepository } from "@/repositories/ProcessRepository";
+import { ProductionRegistryService } from "@/services/EfficiencyRecordService";
 
 @component(FromView)
 export class FormController extends ComponentController {
 
-  public form = useForm<OeeFormType>({
+  public form = useForm<OeeForm>({
     resolver: zodResolver(oeeFormSchema),
   })
 
@@ -38,8 +38,8 @@ export class FormController extends ComponentController {
   private routeParams = useParams<{ ute: UteKeys }>()
 
   constructor(
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository,
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: EfficiencyRecordService
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository,
+    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: ProductionRegistryService
   ) {
     super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
@@ -70,7 +70,7 @@ export class FormController extends ComponentController {
       .catch(console.log)
   }
 
-  handleSave = (data: OeeFormType) => {
+  handleSave = (data: OeeForm) => {
 
     if (this.processes.value.length == 0) return;
     this.loading.set(true)
@@ -80,11 +80,7 @@ export class FormController extends ComponentController {
       return
     }
 
-    this.efficiencyRecordService.createRecord({
-      ...data,
-      ute: this.routeParams.ute as UteKeys,
-      date: new Date(),
-    })
+    this.efficiencyRecordService.createRecord(data)
       .then(resp => {
         this.navigate('/success', { state: resp })
       })

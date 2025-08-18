@@ -10,7 +10,7 @@ import { component } from "@/lib/@component";
 import { ComponentController } from "@/lib/ComponentController";
 import { TableView } from "./table.view";
 import { ComponentView } from "@/lib/ComponentView";
-import { ProductionProcessRepository } from "@/repositories/ProductionProcessRepository";
+import { ProcessRepository } from "@/repositories/ProcessRepository";
 
 @component(TableView)
 export class TableController extends ComponentController {
@@ -49,7 +49,7 @@ export class TableController extends ComponentController {
 
   constructor(
     @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProductionProcessRepository
+    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository
   ) {
     super()
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])

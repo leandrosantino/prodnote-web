@@ -4,37 +4,35 @@ import { HourIntervals } from "./HoursIntervals"
 
 const MINUTES_IN_HOUR = 60
 
-type CalculateVariables = {
-  pieces_quantity: number
-  target: number
-  interval_in_minutes: number
-}
-
 export class ProductionRegistry {
 
   id!: number
+  created_at!: Date
+  process!: Process
+
   process_id!: string
   project!: string
-  created_at!: Date
   turn!: string
   pieces_quantity!: number
   interval_in_minutes!: number
   time_tag!: HourIntervals
   production_losses!: ProductionLosses[]
-  process!: Process
 
-  constructor(data: Omit<Partial<ProductionRegistry>, 'oee' | 'lostTime'>) {
+  constructor(data: Omit<ProductionRegistry, 'oee' | 'lostTime' | 'createData' | 'id' | 'created_at' | 'process'>) {
     Object.assign(this, data);
   }
 
-  getCreateData(): Omit<ProductionRegistry, 'id' | 'created_at' | 'oee' | 'lostTime' | 'process' | 'production_losses'> {
+  get createData() {
     return {
-      process_id: this.process_id,
-      project: this.project,
-      turn: this.turn,
-      pieces_quantity: this.pieces_quantity,
-      interval_in_minutes: this.interval_in_minutes,
-      time_tag: this.time_tag,
+      registryData: {
+        process_id: this.process_id,
+        project: this.project,
+        turn: this.turn,
+        pieces_quantity: this.pieces_quantity,
+        interval_in_minutes: this.interval_in_minutes,
+        time_tag: this.time_tag,
+      },
+      production_losses: this.production_losses
     }
   }
 
@@ -64,6 +62,10 @@ export class ProductionRegistry {
 
 }
 
+type CalculateVariables = {
+  pieces_quantity: number
+  target: number
+  interval_in_minutes: number
+}
 
-
-
+export type ProductionRegistryCreateDto = ProductionRegistry['createData']

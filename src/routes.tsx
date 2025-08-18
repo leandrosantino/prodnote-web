@@ -22,7 +22,7 @@ export function AppRoutes() {
         <Route path="/success" Component={Success} />
         <Route path="/dashboard" Component={Dashboard} />
         <Route path="/table" Component={Table} /> */}
-        <Route path="/Lab" Component={Lab} />
+        <Route path="/" Component={Lab} />
       </Routes>
     </BrowserRouter>
   )
