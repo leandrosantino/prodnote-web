@@ -19,7 +19,11 @@ export class ProductionRegistry {
   time_tag!: HourIntervals
   production_losses!: ProductionLosses[]
 
-  constructor(data: Omit<ProductionRegistry, 'oee' | 'lostTime' | 'createData' | 'id' | 'created_at' | 'process'>) {
+  constructor(data: Omit<
+    ProductionRegistry,
+    'totalReasonsTime' | 'oee' | 'lostTime' | 'createData' | 'id' |
+    'created_at' | 'process' | 'totalScrap'
+  >) {
     Object.assign(this, data);
   }
 
@@ -53,6 +57,26 @@ export class ProductionRegistry {
     })
   }
 
+  get totalReasonsTime() {
+    return this.production_losses
+      .map(item => item.time)
+      .reduce((acc, time) => {
+        acc += time;
+        return acc;
+      })
+  }
+
+  get totalScrap() {
+    const lost_time = this.production_losses
+      .filter(item => item.classification === 'Scrap + Quality Issues')
+      .map(item => item.time)
+      .reduce((acc, time) => {
+        acc += time;
+        return acc;
+      })
+    return ProductionRegistry.convertLostTimeToPieces({ lost_time, target: this.process.target })
+  }
+
   static calculateOee({ pieces_quantity, interval_in_minutes, target }: CalculateVariables) {
     return (MINUTES_IN_HOUR * pieces_quantity) / (target * interval_in_minutes)
   }
@@ -62,11 +86,11 @@ export class ProductionRegistry {
   }
 
   static convertPiecesToLostTime({ pieces_quantity, target }: { pieces_quantity: number, target: number }) {
-    return (MINUTES_IN_HOUR * pieces_quantity) / target
+    return Math.round((pieces_quantity * MINUTES_IN_HOUR) / target)
   }
 
   static convertLostTimeToPieces({ lost_time, target }: { lost_time: number, target: number }) {
-    return lost_time * target / MINUTES_IN_HOUR
+    return Math.round(lost_time * target / MINUTES_IN_HOUR)
   }
 
   static fromOeeForm(formData: OeeForm) {

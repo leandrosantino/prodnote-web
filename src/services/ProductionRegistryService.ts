@@ -15,11 +15,10 @@ export class ProductionRegistryService {
 
   async createRecord(formData: OeeForm) {
     const productionregistry = ProductionRegistry.fromOeeForm(formData);
-
     const process = await this.processRepository.getById(productionregistry.process_id);
-
     if (!process) return
 
+    productionregistry.process = process;
     productionregistry.production_losses.forEach(item => {
       if (item.classification === 'Scrap + Quality Issues') {
         item.time = ProductionRegistry.convertPiecesToLostTime({

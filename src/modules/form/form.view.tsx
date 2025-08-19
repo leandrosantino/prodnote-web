@@ -23,7 +23,7 @@ export function FromView(controller: FormController) {
           <Select name='hourInterval' label='Hora' options={controller.intervals.value.map(val => ({value: val, label: val}))} />
 
           <Select name='process' label='Processo de produção' loading={controller.processLoad.value} options={
-            controller.processes.value.map(val => ({value: val.id ?? '', label: val.description }))
+            controller.processes.value.map(val => ({value: String(val.id) ?? '', label: val.description }))
           } />
 
           <Input type='number' name='piecesQuantity' label='Quantidade de Peças Boas:' />
