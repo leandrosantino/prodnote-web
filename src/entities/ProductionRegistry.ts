@@ -1,7 +1,7 @@
-import { ClassificationTypes, classificationTypesMap, ProductionLosses } from "./ProductionLosses"
-import { Process } from "./Process"
 import { HourIntervals } from "./HoursIntervals"
 import { OeeForm } from "./OeeForm"
+import { Process } from "./Process"
+import { ClassificationTypes, classificationTypesMap, ProductionLosses } from "./ProductionLosses"
 
 const MINUTES_IN_HOUR = 60
 

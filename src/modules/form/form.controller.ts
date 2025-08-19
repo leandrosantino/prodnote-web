@@ -1,21 +1,22 @@
-import { inject } from "tsyringe";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
+import { inject } from "tsyringe";
 
 import { Process } from "@/entities/Process";
 import { useStateObject } from "@/lib/useStateObject";
 
-import { component } from "@/lib/@component";
-import { ComponentController } from "@/lib/ComponentController";
-import { FromView } from "./form.view";
-import { ComponentView } from "@/lib/ComponentView";
 import { hourIntervals } from "@/entities/HoursIntervals";
 import { OeeForm, oeeFormSchema } from "@/entities/OeeForm";
 import { UteKeys, utePattern } from "@/entities/Ute";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { ProductionRegistryService } from "@/services/ProductionRegistryService";
+import { FromView } from "./form.view";
+import { ProductionRegistry } from "@/entities/ProductionRegistry";
 
 @component(FromView)
 export class FormController extends ComponentController {
@@ -44,6 +45,16 @@ export class FormController extends ComponentController {
     super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
+
+    useEffect(() => {
+      this.reasonsField.fields.forEach((item, index) => {
+        this.form.setValue(`reasons.${index}.time`, ProductionRegistry.convertPiecesToLostTime({
+          pieces_quantity: item.time,
+          target: this.processes.value.find(item => item.id == Number(this.form.watch('process')))?.target!
+        }))
+      })
+    }, [this.form.watch('reasons')])
+
   }
 
   private changeHoursInterval() {

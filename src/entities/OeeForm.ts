@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { UteKeys } from "./Ute"
 import { hourIntervals } from "./HoursIntervals"
 
 export const oeeFormSchema = z.object({
@@ -15,14 +14,3 @@ export const oeeFormSchema = z.object({
 })
 
 export type OeeForm = z.infer<typeof oeeFormSchema>
-
-
-export type CreateEfficiencyRecordResponseDTO = {
-  processName: string
-  piecesQuantity: number
-  totalReasonsTime: number
-  totalScrap: number
-  totalRework: number
-  oee: number
-  ute: string
-}

@@ -1,15 +1,15 @@
+import { OeeForm } from "@/entities/OeeForm";
 import { Trash2 } from "lucide-react";
-import { Select } from "./Select";
+import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { classificationTypesMap } from "../../../entities/ProductionLosses";
 import { Input } from "./Input";
-import { useFormContext } from "react-hook-form";
-import { OeeFormType } from "../../../entities/ProductionRegistry";
-import { useEffect, useState } from "react";
+import { Select } from "./Select";
 
 
 export function Reasons({index, onRemove}: {index: number, onRemove: () => void }){
 
-  const {watch} = useFormContext<OeeFormType>()
+  const {watch} = useFormContext<OeeForm>()
 
   const [timeLabel, setTimeLabel] = useState('Tempo:')
 
@@ -23,7 +23,6 @@ export function Reasons({index, onRemove}: {index: number, onRemove: () => void 
     }
     setTimeLabel('Tempo (min):')
   }, [watch(`reasons.${index}.class`)])
-
 
   return (
     <div className="flex flex-col w-full gap-2 border border-zinc-400 rounded-lg p-2">
