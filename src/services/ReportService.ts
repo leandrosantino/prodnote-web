@@ -37,12 +37,12 @@ export class ReportService {
     }> = {}
 
     data.forEach(item => {
-      if (item.process_id in grouped) {
-        grouped[item.process_id].usefulTimeInMunites += item.oee * item.interval_in_minutes,
-          grouped[item.process_id].productionTimeInMinutes += item.interval_in_minutes
+      if (item.process.description in grouped) {
+        grouped[item.process.description].usefulTimeInMunites += item.oee * item.interval_in_minutes,
+          grouped[item.process.description].productionTimeInMinutes += item.interval_in_minutes
         return
       }
-      grouped[item.process_id] = {
+      grouped[item.process.description] = {
         usefulTimeInMunites: item.oee * item.interval_in_minutes,
         productionTimeInMinutes: item.interval_in_minutes
       }

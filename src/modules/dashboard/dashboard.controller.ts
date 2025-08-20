@@ -1,5 +1,4 @@
 import { ProductionRegistry } from "@/entities/ProductionRegistry";
-import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { inject } from "tsyringe";
@@ -15,6 +14,7 @@ import { ComponentView } from "@/lib/ComponentView";
 import { ProductionRegistryService } from "@/services/ProductionRegistryService";
 import { ReportService } from "@/services/ReportService";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
+import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
 
 @component(DashboardView)
 export class DashboardController extends ComponentController {
@@ -52,15 +52,14 @@ export class DashboardController extends ComponentController {
   private topFiveProcessChartFill = 'hsl(var(--chart-1))'
 
   constructor(
-    @inject('EfficiencyRecordService') private readonly efficiencyRecordService: ProductionRegistryService,
-    @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository,
+    @inject('ProductionRegistryService') private readonly productionRegistryService: ProductionRegistryService,
+    @inject('ProcessRepository') private readonly processRepository: ProcessRepository,
+    @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
     @inject('ReportService') private readonly reportService: ReportService
   ) {
     super()
     useEffect(() => { this.loadData() }, [])
     useEffect(() => { this.onChangeFilters() }, [this.data.value])
-    useEffect(() => this.startEfficiencyRecordListinner(), [])
     useEffect(() => { this.caculateOeeValue() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateTotalOfRework() }, [this.dataFiltered.value])
     useEffect(() => { this.calculateTotalOfScrap() }, [this.dataFiltered.value])
@@ -84,10 +83,6 @@ export class DashboardController extends ComponentController {
     }, [this.dateFilter.value])
   }
 
-  public async resetCache() {
-    await this.listEfficiencyRecordCached.reserCache()
-    await this.loadData()
-  }
 
   private onChangeFilters() {
     if (!this.dateFilter.value) {
@@ -99,9 +94,9 @@ export class DashboardController extends ComponentController {
     const filteredByMonth: ProductionRegistry[] = []
     const filteredByDateRange: ProductionRegistry[] = []
     this.data.value.forEach((item) => {
-      if (this.areaFilter.value && item.ute !== this.areaFilter.value) return
+      if (this.areaFilter.value && item.process.ute !== this.areaFilter.value) return
       if (this.turnFilter.value && item.turn !== this.turnFilter.value) return
-      if (this.processFilter.value && item.process_id !== this.processFilter.value) return
+      if (this.processFilter.value && item.process_id !== Number(this.processFilter.value)) return
       if (item.created_at.getMonth() === selectedMonth) filteredByMonth.push(item)
       if (this.typeFilter.value === 'day' && isSameDay(item.created_at, this.dateFilter.value as Date)) filteredByDateRange.push(item)
       if (this.typeFilter.value === 'month' && item.created_at.getMonth() === selectedMonth) filteredByDateRange.push(item)
@@ -120,19 +115,14 @@ export class DashboardController extends ComponentController {
     this.processFilter.set(undefined)
   }
 
-  private startEfficiencyRecordListinner() {
-    const unsubscribe = this.listEfficiencyRecordCached.onCreate()
-    return unsubscribe
-  }
-
   private async loadData() {
     this.loading.set(true)
     try {
-      const data = await this.listEfficiencyRecordCached.execute()
+      const data = await this.productionRegistryRepository.findMany()
       this.data.set(data)
       this.dataFiltered.set(data)
       this.dataFilteredByMonth.set(data)
-      const processes = await this.productionProcessRepository.getAll()
+      const processes = await this.processRepository.getAll()
       this.processes.set(processes.map(item => item.description))
     } catch (err) {
       console.log(err)
@@ -142,7 +132,7 @@ export class DashboardController extends ComponentController {
   }
 
   private caculateOeeValue() {
-    const value = this.reportService.caculateOeeValue(this.dataFiltered.value)
+    const value = this.reportService.caculateoee(this.dataFiltered.value)
     this.oeeValue.set(value.toFixed(1) + ' %')
   }
 
@@ -189,7 +179,7 @@ export class DashboardController extends ComponentController {
   }
 
   async report() {
-    await this.efficiencyRecordService.exportToExcel()
+    await this.productionRegistryService.exportToExcel()
   }
 
 }

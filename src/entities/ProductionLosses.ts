@@ -28,7 +28,7 @@ export interface ProductionLosses {
   id?: number
   production_registry_id?: number
   classification: typeof classificationTypesList[number]
-  cause: string
+  cause: keyof typeof classificationTypesMap
   description: string
   time: number
 }

@@ -26,12 +26,22 @@ export function FromView(controller: FormController) {
             controller.processes.value.map(val => ({value: String(val.id) ?? '', label: val.description }))
           } />
 
-          <Select name='project' label='Projeto' options={[
-            'todos', '551', '226', '521', '598', '291',
-            '551/598', '226/291', '551/598/226/291'
-          ].map(val => ({value: val, label: val}))} />
+          <Select name='project' loading={controller.processLoad.value} label='Projeto' options={
+            controller.projectList.value.map(val => ({value: val, label: val}))
+          } />
 
           <Input type='number' name='piecesQuantity' label='Quantidade de Peças Boas:' />
+
+
+          {controller.lostTime.value < -3 || controller.lostPieces.value < -3?<>
+            <div className='text-red-500' >Apontamento Inconsistente!!! Verifique os dados.</div>
+          </>:<>
+            <div className='text-red-500' >
+              Tempo perdido: {controller.lostTime.value + ' min '} <br />
+              Peças perdidas: {controller.lostPieces.value + ' pçs'}
+            </div>
+          </>
+          }
 
           <div className="flex flex-col gap-2">
             <label className="mb-1 font-medium">Perdas de Eficiência:</label>

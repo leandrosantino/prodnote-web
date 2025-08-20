@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { inject } from "tsyringe";
 
@@ -34,17 +34,56 @@ export class FormController extends ComponentController {
   public loading = useStateObject(false)
   public processes = useStateObject<Process[]>([])
   public processLoad = useStateObject(false)
+  public projectList = useStateObject<string[]>([])
+
+  public lostTime = useStateObject(0)
+  public lostPieces = useStateObject(0)
 
   private navigate = useNavigate()
   private routeParams = useParams<{ ute: UteKeys }>()
+
+  private reasons = useWatch({
+    control: this.form.control,
+    name: "reasons"
+  })
+
 
   constructor(
     @inject('ProcessRepository') private readonly processRepository: ProcessRepository,
     @inject('ProductionRegistryService') private readonly productionRegistryService: ProductionRegistryService
   ) {
     super()
+
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
+    useEffect(() => { this.cahngeProjectLists() }, [this.form.watch('process')])
+    useEffect(() => { this.calculateLosses() }, [
+      this.form.watch('piecesQuantity'),
+      this.reasons
+    ])
+  }
+
+  private calculateLosses() {
+    const oeeFormData = Object.assign({}, this.form.getValues())
+    oeeFormData.reasons = this.formatReasons(oeeFormData)
+    const process = this.findProcessById(this.form.watch('process'))
+    if (!process) return
+
+    const productionRegistry = ProductionRegistry.fromOeeForm(oeeFormData)
+    productionRegistry.process = process
+
+    const lostTime = productionRegistry.lostTime - productionRegistry.totalReasonsTime
+    this.lostTime.set(lostTime)
+    this.lostPieces.set(ProductionRegistry.convertLostTimeToPieces({
+      lost_time: lostTime,
+      target: process.target
+    }))
+  }
+
+  private cahngeProjectLists() {
+    const process = this.findProcessById(this.form.watch('process'))
+    if (!process) return
+    this.projectList.set(process.projects)
   }
 
   private changeHoursInterval() {
@@ -72,7 +111,6 @@ export class FormController extends ComponentController {
   }
 
   handleSave = (data: OeeForm) => {
-
     if (this.processes.value.length == 0) return;
     this.loading.set(true)
 
@@ -81,15 +119,7 @@ export class FormController extends ComponentController {
       return
     }
 
-    data.reasons.forEach(item => {
-      if (item.class == 'Refugo' || item.class == 'Retrabalho') {
-        item.time = ProductionRegistry.convertPiecesToLostTime({
-          pieces_quantity: item.time,
-          target: this.processes.value.find(item => item.id == Number(this.form.watch('process')))?.target!
-        })
-      }
-    })
-
+    data.reasons = this.formatReasons(data)
     this.productionRegistryService.createRecord(data)
       .then(resp => {
         this.navigate('/success', { state: resp })
@@ -104,6 +134,25 @@ export class FormController extends ComponentController {
 
   removeReason(index: number) {
     this.reasonsField.remove(index)
+  }
+
+  private findProcessById(id: string) {
+    return this.processes.value.find(item => item.id == Number(id))
+  }
+
+  private formatReasons(oeeFormData: OeeForm) {
+    return oeeFormData.reasons.map(item => {
+      const ni = Object.assign({}, item)
+      ni.time = Number(ni.time)
+      if (ni.class == 'Refugo' || ni.class == 'Retrabalho') {
+        const a = ProductionRegistry.convertPiecesToLostTime({
+          pieces_quantity: ni.time,
+          target: this.findProcessById(this.form.watch('process'))?.target!
+        })
+        ni.time = a
+      }
+      return ni
+    })
   }
 
 }

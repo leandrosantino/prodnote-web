@@ -3,9 +3,9 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export const tableColumns: ColumnDef<ProductionRegistry>[] = [
   {
-    accessorKey: "date",
+    accessorKey: "created_at",
     header: () => <div className='w-32' >Data</div>,
-    cell: ({row}) => <div className='w-32'>{(row.getValue('date') as Date).toLocaleDateString()}</div>,
+    cell: ({row}) => <div className='w-32'>{(row.getValue('created_at') as Date).toLocaleDateString()}</div>,
     filterFn: (row, columnId, filterValue) =>{
       const rowValue = row.getValue(columnId) as Date;
       const dataLinha = new Date(rowValue);
@@ -21,26 +21,26 @@ export const tableColumns: ColumnDef<ProductionRegistry>[] = [
   {
     accessorKey: "ute",
     header: () => <div className='min-w-20' >UTE</div>,
-    cell: ({row}) => <div className='min-w-20'>{row.getValue('ute')}</div>
+    cell: ({row}) => <div className='min-w-20'>{row.original.process.ute}</div>
   },
   {
-    accessorKey: "hourInterval",
+    accessorKey: "time_tag",
     header: () => <div className='min-w-32' >Hora</div>,
-    cell: ({row}) => <div className='min-w-32'>{row.getValue('hourInterval')}</div>
+    cell: ({row}) => <div className='min-w-32'>{row.getValue('time_tag')}</div>
   },
   {
-    accessorKey: "productionProcessId",
+    accessorKey: "process_id",
     header: () => <div className='w-56' >Processo</div>,
-    cell: ({row}) => <div className='w-56'>{row.getValue('productionProcessId')}</div>
+    cell: ({row}) => <div className='w-56'>{row.original.process.description}</div>
   },
   {
-    accessorKey: "piecesQuantity",
+    accessorKey: "pieces_quantity",
     header: () => <div className='min-w-28' >Peças Boas</div>,
-    cell: ({row}) => <div className='min-w-28'>{row.getValue('piecesQuantity')}</div>
+    cell: ({row}) => <div className='min-w-28'>{row.getValue('pieces_quantity')}</div>
   },
   {
-    accessorKey: "oeeValue",
+    accessorKey: "oee",
     header: () => <div className='min-w-28' >OEE</div>,
-    cell: ({row}) => <div className='min-w-28'>{(Number(row.getValue('oeeValue')) * 100).toFixed(0) + '%'}</div>
+    cell: ({row}) => <div className='min-w-28'>{(Number(row.getValue('oee')) * 100).toFixed(0) + '%'}</div>
   },
 ];

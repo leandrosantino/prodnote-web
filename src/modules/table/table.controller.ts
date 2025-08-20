@@ -5,12 +5,12 @@ import { useStateObject } from "@/lib/useStateObject";
 import { tableColumns } from "./table-columns";
 import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { useEffect } from "react";
-import { ListEfficiencyRecordCached } from "@/warpers/ListEfficiencyRecordCached";
 import { component } from "@/lib/@component";
 import { ComponentController } from "@/lib/ComponentController";
 import { TableView } from "./table.view";
 import { ComponentView } from "@/lib/ComponentView";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
+import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
 
 @component(TableView)
 export class TableController extends ComponentController {
@@ -48,16 +48,15 @@ export class TableController extends ComponentController {
   })
 
   constructor(
-    @inject('ListEfficiencyRecordCached') private readonly listEfficiencyRecordCached: ListEfficiencyRecordCached,
-    @inject('ProductionProcessRepository') private readonly productionProcessRepository: ProcessRepository
+    @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
+    @inject('ProcessRepository') private readonly processRepository: ProcessRepository
   ) {
     super()
     useEffect(() => { this.table.setPageSize(this.data.value.length) }, [this.data.value])
     useEffect(() => { this.loadData() }, [])
-    useEffect(() => this.startEfficiencyRecordListinner(), [])
 
     useEffect(() => { this.onChangeDateFilter() }, [this.dateFilter.value])
-    useEffect(() => { this.onChangeTableDateFilter() }, [this.table.getColumn('date')?.getFilterValue()])
+    useEffect(() => { this.onChangeTableDateFilter() }, [this.table.getColumn('created_at')?.getFilterValue()])
 
     useEffect(() => { this.onChangeAreaFilter() }, [this.areaFilter.value])
     useEffect(() => { this.onChangeTableAreaFilter() }, [this.table.getColumn('ute')?.getFilterValue()])
@@ -66,20 +65,15 @@ export class TableController extends ComponentController {
     useEffect(() => { this.onChangeTableTurnFilter() }, [this.table.getColumn('turn')?.getFilterValue()])
 
     useEffect(() => { this.onChangeProcessFilter() }, [this.processFilter.value])
-    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('productionProcessId')?.getFilterValue()])
+    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('process_id')?.getFilterValue()])
 
-  }
-
-  private startEfficiencyRecordListinner() {
-    const unsubscribe = this.listEfficiencyRecordCached.onCreate()
-    return unsubscribe
   }
 
   private onChangeDateFilter() {
-    this.table.getColumn('date')?.setFilterValue(this.dateFilter.value)
+    this.table.getColumn('created_at')?.setFilterValue(this.dateFilter.value)
   }
   private onChangeTableDateFilter() {
-    this.dateFilter.set(this.table.getColumn('date')?.getFilterValue() as Date)
+    this.dateFilter.set(this.table.getColumn('created_at')?.getFilterValue() as Date)
   }
 
   private onChangeAreaFilter() {
@@ -97,17 +91,17 @@ export class TableController extends ComponentController {
   }
 
   private onChangeProcessFilter() {
-    this.table.getColumn('productionProcessId')?.setFilterValue(this.processFilter.value)
+    this.table.getColumn('process_id')?.setFilterValue(this.processFilter.value)
   }
   private onChangeTableProcessFilter() {
-    this.processFilter.set(this.table.getColumn('productionProcessId')?.getFilterValue() as string)
+    this.processFilter.set(this.table.getColumn('process_id')?.getFilterValue() as string)
   }
 
   private async loadData() {
     this.loading.set(true)
     try {
-      this.data.set(await this.listEfficiencyRecordCached.execute());
-      const processes = await this.productionProcessRepository.getAll()
+      this.data.set(await this.productionRegistryRepository.findMany());
+      const processes = await this.processRepository.getAll()
       this.processes.set(processes.map(item => item.description))
     } catch (error) {
       console.error("Erro ao carregar dados:", error);

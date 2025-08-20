@@ -23,7 +23,6 @@ export class ProcessRepository {
       .eq("ute", ute);
 
     if (error) throw error;
-    console.log(data)
     return data ?? [];
   }
 

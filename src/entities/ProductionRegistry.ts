@@ -25,6 +25,7 @@ export class ProductionRegistry {
     'created_at' | 'process' | 'totalScrap'
   >) {
     Object.assign(this, data);
+    this.created_at = new Date(this.created_at)
   }
 
   get createData() {
@@ -50,14 +51,16 @@ export class ProductionRegistry {
   }
 
   get lostTime() {
-    return ProductionRegistry.calculateLostTime({
+    const val = ProductionRegistry.calculateLostTime({
       pieces_quantity: this.pieces_quantity,
       interval_in_minutes: this.interval_in_minutes,
       target: this.process.target
     })
+    return Math.round(val)
   }
 
   get totalReasonsTime() {
+    if (this.production_losses.length === 0) return 0;
     return this.production_losses
       .map(item => item.time)
       .reduce((acc, time) => {
@@ -67,8 +70,9 @@ export class ProductionRegistry {
   }
 
   get totalScrap() {
+    if (this.production_losses.length === 0) return 0;
     const lost_time = this.production_losses
-      .filter(item => item.classification === 'Scrap + Quality Issues')
+      .filter(item => item.cause === 'Refugo')
       .map(item => item.time)
       .reduce((acc, time) => {
         acc += time;
@@ -109,7 +113,7 @@ export class ProductionRegistry {
         .map(item => ({
           classification: classificationTypesMap[item.class as ClassificationTypes],
           description: item.description,
-          cause: item.class,
+          cause: item.class as any,
           time: item.time
         }))
     })

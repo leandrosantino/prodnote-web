@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { TableController } from "./table.component"
+import { TableController } from "./table.controller"
 import { ArrowLeft, FilterX } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { flexRender } from "@tanstack/react-table"

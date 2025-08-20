@@ -1,6 +1,6 @@
 import { DashboardController } from "./dashboard.controller"
 import { DataCard } from "./components/data-card"
-import { Download, FilterX, OctagonX, RefreshCcwDot, Repeat2, Table, Target, Trash2 } from "lucide-react"
+import { Download, FilterX, OctagonX, Repeat2, Table, Target, Trash2 } from "lucide-react"
 import { DailyChart } from "./components/daily-chart"
 import { LossReasonChart } from "./components/loss-reason-chart"
 import { TopFiveProcessChart } from "./components/top-five-process-chart"
@@ -18,7 +18,7 @@ export function DashboardView(controller: DashboardController) {
 
       <div className="flex gap-2 flex-wrap justify-between pb-4" >
         <h2 className='text-3xl font-bold max-md:text-2xl' >Dashboard - Lançamento de OEE</h2>
-        <Button onClick={() => controller.resetCache()} variant='destructive' > Hard Refresh <RefreshCcwDot  /> </Button>
+        {/* <Button onClick={() => controller.resetCache()} variant='destructive' > Hard Refresh <RefreshCcwDot  /> </Button> */}
       </div>
 
       <div className="w-full flex justify-center items-center py-3" >
