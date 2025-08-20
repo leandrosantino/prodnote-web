@@ -26,6 +26,11 @@ export function FromView(controller: FormController) {
             controller.processes.value.map(val => ({value: String(val.id) ?? '', label: val.description }))
           } />
 
+          <Select name='project' label='Projeto' options={[
+            'todos', '551', '226', '521', '598', '291',
+            '551/598', '226/291', '551/598/226/291'
+          ].map(val => ({value: val, label: val}))} />
+
           <Input type='number' name='piecesQuantity' label='Quantidade de Peças Boas:' />
 
           <div className="flex flex-col gap-2">

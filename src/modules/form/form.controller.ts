@@ -45,16 +45,6 @@ export class FormController extends ComponentController {
     super()
     useEffect(() => { this.changeHoursInterval() }, [this.form.watch('turn')])
     useEffect(() => { this.getProcessesByUte() }, [this.routeParams.ute])
-
-    useEffect(() => {
-      this.reasonsField.fields.forEach((item, index) => {
-        this.form.setValue(`reasons.${index}.time`, ProductionRegistry.convertPiecesToLostTime({
-          pieces_quantity: item.time,
-          target: this.processes.value.find(item => item.id == Number(this.form.watch('process')))?.target!
-        }))
-      })
-    }, [this.form.watch('reasons')])
-
   }
 
   private changeHoursInterval() {
@@ -90,6 +80,15 @@ export class FormController extends ComponentController {
       this.loading.set(false)
       return
     }
+
+    data.reasons.forEach(item => {
+      if (item.class == 'Refugo' || item.class == 'Retrabalho') {
+        item.time = ProductionRegistry.convertPiecesToLostTime({
+          pieces_quantity: item.time,
+          target: this.processes.value.find(item => item.id == Number(this.form.watch('process')))?.target!
+        })
+      }
+    })
 
     this.productionRegistryService.createRecord(data)
       .then(resp => {

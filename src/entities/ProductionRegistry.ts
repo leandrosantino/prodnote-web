@@ -102,7 +102,7 @@ export class ProductionRegistry {
       process_id: Number(formData.process),
       interval_in_minutes,
       pieces_quantity: formData.piecesQuantity,
-      project: '',
+      project: formData.project,
       time_tag: formData.hourInterval,
       turn: formData.turn,
       production_losses: formData.reasons

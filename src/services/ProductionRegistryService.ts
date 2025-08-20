@@ -19,14 +19,6 @@ export class ProductionRegistryService {
     if (!process) return
 
     productionregistry.process = process;
-    productionregistry.production_losses.forEach(item => {
-      if (item.classification === 'Scrap + Quality Issues') {
-        item.time = ProductionRegistry.convertPiecesToLostTime({
-          pieces_quantity: item.time,
-          target: process.target
-        })
-      }
-    })
 
     await this.productionRegistryRepository.create(productionregistry.createData)
     return productionregistry;
