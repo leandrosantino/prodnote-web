@@ -38,7 +38,8 @@ export class ProductionRegistryRepository {
   async findMany(filters: Filters = {}): Promise<ProductionRegistry[]> {
     let q = supabase
       .from(ProductionRegistryRepository.tableName)
-      .select<string, ProductionRegistry>(`*, process (*), production_losses (*)`);
+      .select<string, ProductionRegistry>(`*, process (*), production_losses (*)`)
+      .order("created_at", { ascending: false });
 
     if (filters.createdAtStart) q = q.gte('created_at', filters.createdAtStart);
     if (filters.createdAtEnd) q = q.lte('created_at', filters.createdAtEnd);
