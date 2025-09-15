@@ -165,6 +165,7 @@ export class DashboardController extends ComponentController {
     this.topFiveProcessChartData.set(data.map(item => ({
       category: item.class,
       oee: item.oee,
+      pieces_quantity: item.pieces_quantity,
       fill: this.topFiveProcessChartFill
     })))
   }

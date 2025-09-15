@@ -5,7 +5,7 @@ import { ClassificationTypes } from "@/entities/ProductionLosses";
 @singleton()
 export class ReportService {
 
-  calculateDailyChartData(data: ProductionRegistry[]): Array<{ date: string; oee: number; }> {
+  calculateDailyChartData(data: ProductionRegistry[]) {
     if (data.length < 1) return []
     const grouped: Array<{ usefulTimeInMunites: number, productionTimeInMinutes: number }> = []
 
@@ -29,29 +29,28 @@ export class ReportService {
     return formated;
   }
 
-  calculateTopFiveProcessChartData(data: ProductionRegistry[]): Array<{ class: string; oee: number; }> {
+  calculateTopFiveProcessChartData(data: ProductionRegistry[]) {
     if (data.length < 1) return []
-    const grouped: Record<string, {
-      usefulTimeInMunites: number
-      productionTimeInMinutes: number
-    }> = {}
+    const grouped: Record<string, { pieces_quantity: number, interval_in_minutes: number, target: number }> = {}
 
     data.forEach(item => {
       if (item.process.description in grouped) {
-        grouped[item.process.description].usefulTimeInMunites += item.oee * item.interval_in_minutes,
-          grouped[item.process.description].productionTimeInMinutes += item.interval_in_minutes
+        grouped[item.process.description].interval_in_minutes += item.interval_in_minutes
+        grouped[item.process.description].pieces_quantity += item.pieces_quantity
         return
       }
       grouped[item.process.description] = {
-        usefulTimeInMunites: item.oee * item.interval_in_minutes,
-        productionTimeInMinutes: item.interval_in_minutes
+        pieces_quantity: item.pieces_quantity,
+        target: item.process.target,
+        interval_in_minutes: item.interval_in_minutes
       }
     })
 
     const formated = Object.entries(grouped)
-      .map(([key, { productionTimeInMinutes, usefulTimeInMunites }]) => ({
+      .map(([key, { pieces_quantity, interval_in_minutes, target }]) => ({
         class: key,
-        oee: usefulTimeInMunites / productionTimeInMinutes
+        pieces_quantity,
+        oee: ProductionRegistry.calculateOee({ pieces_quantity, interval_in_minutes, target })
       }))
 
     return formated.sort((a, b) => a.oee - b.oee).slice(0, 5)

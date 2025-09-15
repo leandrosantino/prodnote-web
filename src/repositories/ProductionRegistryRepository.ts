@@ -27,6 +27,14 @@ export class ProductionRegistryRepository {
     }
   }
 
+  async getAll() {
+    const { data, error } = await supabase
+      .from(ProductionRegistryRepository.tableName)
+      .select<string, ProductionRegistry>("*, process (*)")
+    if (error) throw new Error(`Error fetching data: ${error.message}`);
+    return data.map(item => new ProductionRegistry(item));
+  }
+
   async findMany(filters: Filters = {}): Promise<ProductionRegistry[]> {
     let q = supabase
       .from(ProductionRegistryRepository.tableName)

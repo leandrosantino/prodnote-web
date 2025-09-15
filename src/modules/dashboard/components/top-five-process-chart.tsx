@@ -16,13 +16,16 @@ import {
 export type TopFiveProcessChartData = {
   category: string;
   oee: number;
+  pieces_quantity: number;
   fill: string;
 }
 
 export function TopFiveProcessChart({data}: {data: TopFiveProcessChartData[]}) {
 
   const categories: Record<string, {label: string}> = {}
+
   data.forEach(item => { categories[item.category] = {label: item.category} })
+
   const chartConfig = { oee: { label: "OEE" }, ...categories} satisfies ChartConfig
 
   return (
@@ -57,6 +60,16 @@ export function TopFiveProcessChart({data}: {data: TopFiveProcessChartData[]}) {
               cursor={false}
               content={<ChartTooltipContent
                 valueFormat={(value: string) => `${(Number(value.replace(',', '.'))* 100).toFixed(0)}%`}
+                labelFormatter={(_: string, payload: any) => {
+                  const item = payload[0].payload;
+                  return <>
+                    <span>{item.category}</span> <br />
+                    <div className="flex justify-between">
+                      <span className="text-zinc-700" > Produzido: </span>
+                      {item.pieces_quantity} pçs
+                    </div>
+                  </>
+                }}
               />}
             />
             <Bar dataKey="oee" layout="vertical" radius={5} >

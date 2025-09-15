@@ -34,6 +34,11 @@ export const tableColumns: ColumnDef<ProductionRegistry>[] = [
     cell: ({row}) => <div className='w-56'>{row.original.process.description}</div>
   },
   {
+    accessorKey: "project",
+    header: () => <div className='min-w-28' >Projeto</div>,
+    cell: ({row}) => <div className='min-w-28'>{row.getValue('project')}</div>
+  },
+  {
     accessorKey: "pieces_quantity",
     header: () => <div className='min-w-28' >Peças Boas</div>,
     cell: ({row}) => <div className='min-w-28'>{row.getValue('pieces_quantity')}</div>

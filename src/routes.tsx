@@ -14,11 +14,11 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/table" Component={Table} />
         <Route path="/dashboard" Component={Dashboard} />
         <Route path="/success" Component={Success} />
         <Route path="/:ute" Component={Form} />
+        {/* <Route path="/:ute" Component={Production} /> */}
       </Routes>
     </BrowserRouter>
   )
