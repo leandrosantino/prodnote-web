@@ -34,7 +34,7 @@ export function TableView(controller: TableController){
           <FilterX />
         </Button>
       </div>
-      <div className="rounded-md border overflow-hidden">
+      <div className="rounded-md border overflow-auto">
       <Table>
         <TableHeader className='bg-accent shadow-md rounded-t-md'>
           {controller.table.getHeaderGroups().map((headerGroup) => (

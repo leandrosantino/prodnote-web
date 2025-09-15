@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProductionRegistry } from "@/entities/ProductionRegistry";
 
 
-export function ProductionView(controller: ProductionController) {
+export function ProductionView(_: ProductionController) {
 
   const {ute} = useParams<{ ute: UteKeys }>()
   const navigate = useNavigate()
@@ -79,7 +79,7 @@ export function ProductionView(controller: ProductionController) {
                     60%
                   </td>
                 </tr>
-                {item.production_losses.slice(1).map((loss, lossIndex) => (<>
+                {item.production_losses.slice(1).map((_, lossIndex) => (<>
                   <tr key={index+ lossIndex}>
                     <td className="border border-black px-4 py-2">
 

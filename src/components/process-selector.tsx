@@ -49,9 +49,9 @@ export function ProcessSelector({ value, setValue, processes }: props) {
           <CommandList>
             <CommandEmpty>Nenhum processo encontrado.</CommandEmpty>
             <CommandGroup>
-              {processes.map((process) => (
+              {processes.map((process, index) => (
                 <CommandItem
-                  key={process}
+                  key={`${index}${process}`}
                   value={process}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue)

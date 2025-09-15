@@ -7,10 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ProductionRegistry } from "@/entities/ProductionRegistry"
 import { ReactNode } from "react"
+import { TableData } from "../table-columns"
 
-export function LossesReasonDialog({ children, efficiencyRecord }: {children: ReactNode, efficiencyRecord: ProductionRegistry}) {
+export function LossesReasonDialog({ children, efficiencyRecord }: {children: ReactNode, efficiencyRecord: TableData}) {
   return (
     <Dialog>
       <DialogTrigger asChild>

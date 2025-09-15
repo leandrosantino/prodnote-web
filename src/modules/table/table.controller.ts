@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { inject } from "tsyringe";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState, Table } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { useStateObject } from "@/lib/useStateObject";
-import { tableColumns } from "./table-columns";
-import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { tableColumns, TableData } from "./table-columns";
 import { useEffect } from "react";
 import { component } from "@/lib/@component";
 import { ComponentController } from "@/lib/ComponentController";
@@ -12,13 +11,14 @@ import { ComponentView } from "@/lib/ComponentView";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
 
+
 @component(TableView)
 export class TableController extends ComponentController {
 
   private navigate = useNavigate()
   private sorting = useStateObject<SortingState>([])
   private columnFilters = useStateObject<ColumnFiltersState>([])
-  private data = useStateObject<ProductionRegistry[]>([])
+  private data = useStateObject<TableData[]>([])
 
   public dateFilter = useStateObject<Date | undefined>()
   public areaFilter = useStateObject<string | undefined>()
@@ -65,7 +65,7 @@ export class TableController extends ComponentController {
     useEffect(() => { this.onChangeTableTurnFilter() }, [this.table.getColumn('turn')?.getFilterValue()])
 
     useEffect(() => { this.onChangeProcessFilter() }, [this.processFilter.value])
-    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('process_id')?.getFilterValue()])
+    useEffect(() => { this.onChangeTableProcessFilter() }, [this.table.getColumn('process')?.getFilterValue()])
 
   }
 
@@ -91,16 +91,28 @@ export class TableController extends ComponentController {
   }
 
   private onChangeProcessFilter() {
-    this.table.getColumn('process_id')?.setFilterValue(this.processFilter.value)
+    this.table.getColumn('process')?.setFilterValue(this.processFilter.value)
   }
   private onChangeTableProcessFilter() {
-    this.processFilter.set(this.table.getColumn('process_id')?.getFilterValue() as string)
+    this.processFilter.set(this.table.getColumn('process')?.getFilterValue() as string)
   }
 
   private async loadData() {
     this.loading.set(true)
     try {
-      this.data.set(await this.productionRegistryRepository.findMany());
+      const registries = (await this.productionRegistryRepository.findMany())
+        .map(registry => {
+          const { process, ...item } = registry
+          return {
+            ...item,
+            process: process.description,
+            ute: process.ute,
+            oee: registry.oee,
+            target: process.target,
+            createData: '' as any, lostTime: '' as any, totalReasonsTime: '' as any, totalScrap: '' as any
+          }
+        })
+      this.data.set(registries);
       const processes = await this.processRepository.getAll()
       this.processes.set(processes.map(item => item.description))
     } catch (error) {
