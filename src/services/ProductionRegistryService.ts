@@ -6,6 +6,7 @@ import { ProductionRegistry } from "@/entities/ProductionRegistry";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { supabase } from "@/repositories/supabase";
 import { ProductionLosses } from "@/entities/ProductionLosses";
+import { isAfter, isBefore, isEqual, set, subDays } from "date-fns";
 
 @singleton()
 export class ProductionRegistryService {
@@ -20,13 +21,28 @@ export class ProductionRegistryService {
     const process = await this.processRepository.getById(productionregistry.process_id);
     if (!process) return
 
+
+    if (productionregistry.turn == '2' && this.isLastHourOfSecondTurn()) {
+      productionregistry.created_at = set(
+        subDays(new Date(), 1),
+        { hours: 23, minutes: 59, seconds: 0, milliseconds: 0 }
+      );
+    }
+
     productionregistry.process = process;
 
     await this.productionRegistryRepository.create(productionregistry.createData)
     return productionregistry;
   }
 
-  async get_production_losses() {
+  private isLastHourOfSecondTurn() {
+    const now = new Date()
+    const start = set(subDays(now, 1), { hours: 23, minutes: 59, seconds: 59, milliseconds: 999 });
+    const end = set(now, { hours: 1, minutes: 14, seconds: 0, milliseconds: 0 });
+    return isAfter(now, start) && (isBefore(now, end) || isEqual(now, end));
+  }
+
+  private async get_production_losses() {
     const { data, error } = await supabase.from('production_losses')
       .select<string, ProductionLosses>('*')
 

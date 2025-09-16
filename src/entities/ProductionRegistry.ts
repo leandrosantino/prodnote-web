@@ -1,3 +1,4 @@
+import { isValid } from "date-fns"
 import { HourIntervals } from "./HoursIntervals"
 import { OeeForm } from "./OeeForm"
 import { Process } from "./Process"
@@ -25,7 +26,12 @@ export class ProductionRegistry {
     'created_at' | 'process' | 'totalScrap'
   >) {
     Object.assign(this, data);
-    this.created_at = new Date(this.created_at)
+    this.created_at = this.convertCreatedAtToUTC3(new Date(this.created_at))
+  }
+
+  private convertCreatedAtToUTC3(dateUTC: string | Date): Date {
+    const date = new Date(dateUTC);
+    return new Date(date.getTime() - 3 * 60 * 60 * 1000);
   }
 
   get createData() {
@@ -37,6 +43,7 @@ export class ProductionRegistry {
         pieces_quantity: this.pieces_quantity,
         interval_in_minutes: this.interval_in_minutes,
         time_tag: this.time_tag,
+        ...isValid(this.created_at) ? { created_at: this.created_at } : {}
       },
       production_losses: this.production_losses
     }
