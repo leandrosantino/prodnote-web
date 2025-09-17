@@ -22,7 +22,7 @@ export function TableView(controller: TableController){
         <AreaSelector key={controller.areaFilterKey.value} setValue={controller.areaFilter.set} value={controller.areaFilter.value}  />
         <TurnSelector key={controller.turnFilterKey.value} setValue={controller.turnFilter.set} value={controller.turnFilter.value}  />
         <ProcessSelector
-          processes={controller.processes.value}
+          processes={controller.processes.value.map(item => item.description)}
           value={controller.processFilter.value}
           setValue={controller.processFilter.set}
         />

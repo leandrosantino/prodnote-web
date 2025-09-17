@@ -15,6 +15,7 @@ import { ProductionRegistryService } from "@/services/ProductionRegistryService"
 import { ReportService } from "@/services/ReportService";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
+import { Process } from "@/entities/Process";
 
 @component(DashboardView)
 export class DashboardController extends ComponentController {
@@ -41,7 +42,7 @@ export class DashboardController extends ComponentController {
   public areaFilter = this.useState<string | undefined>()
   public turnFilter = this.useState<string | undefined>()
   public processFilter = this.useState<string | undefined>()
-  public processes = this.useState<string[]>([])
+  public processes = this.useState<Process[]>([])
 
   public areaFilterKey = this.useState(0)
   public turnFilterKey = this.useState(1)
@@ -74,6 +75,7 @@ export class DashboardController extends ComponentController {
       this.turnFilter.value,
       this.processFilter.value,
     ])
+    useEffect(() => { this.onAreaFilterChange() }, [this.areaFilter.value])
     useEffect(() => {
       if (this.dateFilter.value === undefined) this.dateFilter.set(new Date())
     }, [this.dateFilter.value])
@@ -81,6 +83,15 @@ export class DashboardController extends ComponentController {
       if (!this.dateFilter.value) return
       this.selectedMonthMame.set(format(this.dateFilter.value, 'MMMM', { locale: ptBR }))
     }, [this.dateFilter.value])
+  }
+
+  private onAreaFilterChange() {
+    if (!this.areaFilter.value) return
+    this.processFilter.set(undefined)
+    this.processRepository.getByUte(this.areaFilter.value)
+      .then(filtered => {
+        this.processes.set(filtered)
+      })
   }
 
 
@@ -96,7 +107,7 @@ export class DashboardController extends ComponentController {
     this.data.value.forEach((item) => {
       if (this.areaFilter.value && item.process.ute !== this.areaFilter.value) return
       if (this.turnFilter.value && item.turn !== this.turnFilter.value) return
-      if (this.processFilter.value && item.process_id !== Number(this.processFilter.value)) return
+      if (this.processFilter.value && item.process.description !== this.processFilter.value) return
       if (item.created_at.getMonth() === selectedMonth) filteredByMonth.push(item)
       if (this.typeFilter.value === 'day' && isSameDay(item.created_at, this.dateFilter.value as Date)) filteredByDateRange.push(item)
       if (this.typeFilter.value === 'month' && item.created_at.getMonth() === selectedMonth) filteredByDateRange.push(item)
@@ -113,6 +124,10 @@ export class DashboardController extends ComponentController {
     this.turnFilterKey.set((prevKey) => prevKey + 1)
     this.dateFilter.set(undefined)
     this.processFilter.set(undefined)
+    this.processRepository.getAll()
+      .then(filtered => {
+        this.processes.set(filtered)
+      })
   }
 
   private async loadData() {
@@ -123,7 +138,7 @@ export class DashboardController extends ComponentController {
       this.dataFiltered.set(data)
       this.dataFilteredByMonth.set(data)
       const processes = await this.processRepository.getAll()
-      this.processes.set(processes.map(item => item.description))
+      this.processes.set(processes)
     } catch (err) {
       console.log(err)
     } finally {

@@ -31,7 +31,7 @@ export function DashboardView(controller: DashboardController) {
           </div>
           <div className="flex gap-2 flex-wrap" >
             <ProcessSelector
-              processes={controller.processes.value}
+              processes={controller.processes.value.map(item => item.description)}
               value={controller.processFilter.value}
               setValue={controller.processFilter.set}
             />

@@ -10,6 +10,7 @@ import { TableView } from "./table.view";
 import { ComponentView } from "@/lib/ComponentView";
 import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
+import { Process } from "@/entities/Process";
 
 
 @component(TableView)
@@ -24,7 +25,7 @@ export class TableController extends ComponentController {
   public areaFilter = useStateObject<string | undefined>()
   public turnFilter = useStateObject<string | undefined>()
   public processFilter = useStateObject<string | undefined>()
-  public processes = useStateObject<string[]>([])
+  public processes = useStateObject<Process[]>([])
 
   public areaFilterKey = useStateObject(0)
   public turnFilterKey = useStateObject(1)
@@ -78,7 +79,14 @@ export class TableController extends ComponentController {
 
   private onChangeAreaFilter() {
     this.table.getColumn('ute')?.setFilterValue(this.areaFilter.value)
+    if (!this.areaFilter.value) return
+    this.processFilter.set(undefined)
+    this.processRepository.getByUte(this.areaFilter.value)
+      .then(filtered => {
+        this.processes.set(filtered)
+      })
   }
+
   private onChangeTableAreaFilter() {
     this.areaFilter.set(this.table.getColumn('ute')?.getFilterValue() as string)
   }
@@ -114,7 +122,7 @@ export class TableController extends ComponentController {
         })
       this.data.set(registries);
       const processes = await this.processRepository.getAll()
-      this.processes.set(processes.map(item => item.description))
+      this.processes.set(processes)
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     } finally {
@@ -131,6 +139,10 @@ export class TableController extends ComponentController {
     this.processFilter.set(undefined)
     this.table.reset()
     this.table.setPageSize(this.data.value.length)
+    this.processRepository.getAll()
+      .then(filtered => {
+        this.processes.set(filtered)
+      })
   }
 
   public goToDashboard() {
