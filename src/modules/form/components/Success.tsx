@@ -35,7 +35,7 @@ export function Success(){
           </thead>
           <tbody>
             <tr>
-              <td className="border px-4 py-2">Peças boas Produzidas (pçs)</td>
+              <td className="border px-4 py-2">Peças boas Produzidas</td>
               <td className="border px-4 py-2">{productionRegistry?.pieces_quantity}</td>
             </tr>
             <tr>

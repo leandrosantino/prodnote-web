@@ -78,13 +78,16 @@ export class ProductionRegistry {
 
   get totalScrap() {
     if (this.production_losses.length === 0) return 0;
-    const lost_time = this.production_losses
+    const losses = this.production_losses
       .filter(item => item.cause === 'Refugo')
-      .map(item => item.time)
+
+    if (losses.length === 0) return 0;
+    const lost_time = losses.map(item => item.time)
       .reduce((acc, time) => {
         acc += time;
         return acc;
       })
+
     return ProductionRegistry.convertLostTimeToPieces({ lost_time, target: this.process.target })
   }
 

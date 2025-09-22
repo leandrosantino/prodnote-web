@@ -8,18 +8,19 @@ export const classificationTypesList = [
 ] as const
 
 export const classificationTypesMap = {
-  'Ajsute de Parâmetro': 'Shift Setup',
+  'Refeição': 'Organizational Issues',
+  'Treinamento/DDS': 'Organizational Issues',
+  'Absenteísmo': 'Organizational Issues',
+  'Logística': 'Organizational Issues',
+  'Operacional': 'Organizational Issues',
   'Setup': 'Change-Over + SMED',
   'Máquina quebrada': 'Breakdowns',
+  'Ajsute de Parâmetro': 'Shift Setup',
   'Manutenção programada': 'Maintenance',
   'Organização/Limpeza': 'Organizational Issues',
   'Troca de material': 'Organizational Issues',
-  'Refeição': 'Organizational Issues',
   'Retrabalho': 'Scrap + Quality Issues',
   'Refugo': 'Scrap + Quality Issues',
-  'RH': 'Organizational Issues',
-  'Logística': 'Organizational Issues',
-  'Operacional': 'Organizational Issues',
 } as const
 
 export type ClassificationTypes = keyof typeof classificationTypesMap

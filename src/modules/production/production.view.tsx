@@ -1,92 +1,86 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 import { ProductionController } from "./production.controller";
-import { UteKeys } from "@/entities/Ute";
 import { Button } from "@/components/ui/button";
-import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { cn } from "@/lib/utils";
 
 
-export function ProductionView(_: ProductionController) {
+export function ProductionView(controller: ProductionController) {
 
-  const {ute} = useParams<{ ute: UteKeys }>()
-  const navigate = useNavigate()
-
-  const data: ProductionRegistry[] = new Array(10).fill({
-    id: 1,
-    created_at: new Date(),
-    process: { id: 1, description: 'Processo 1', target: 100, ute: 'UTE-1', projects:['226'] },
-    process_id: 1,
-    project: '226',
-    turn: '1',
-    pieces_quantity: 10,
-    interval_in_minutes: 10,
-    time_tag: '06:00-06:59',
-    production_losses: [
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-      { id: 1, classification: 'parada', reason: 'Setup', minutes: 2, scrap: 3 },
-    ],
-    createData: {} as any,
-    lostTime: 0,
-    oee: 0.6,
-    totalReasonsTime: 0,
-    totalScrap: 0
-  })
+  const classes = {
+    cell: "border border-black p-2 border-b-[3px] border-t-[3px]",
+    header: 'border border-black p-2'
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto p-4 bg-white shadow-lg rounded-md h-full flex flex-col gap-2 overflow-auto" >
 
       <header className="flex justify-between" >
-        <h1 className="text-2xl font-bold" >Quadro Hora à Hora - Processo 1 - {ute}</h1>
-        <Button onClick={() => navigate('/form/' + ute)} >Laçamento</Button>
+        <h1 className="text-2xl font-bold" >Quadro Hora à Hora - Processo 1 - {controller.params?.ute}</h1>
+        <Button onClick={() => controller.navigate('/form/' + controller.params?.ute)} >Laçamento</Button>
       </header>
 
-      <section>
+      <section className="overflow-auto" >
           <table className="w-full table-auto text-center border border-zinc-500">
             <thead>
               <tr>
-                <th className="border border-black px-4 py-2">Hora</th>
-                <th className="border border-black px-4 py-2">Target</th>
-                <th className="border border-black px-4 py-2">Produzido</th>
-                <th className="border border-black px-4 py-2">Perdas</th>
-                <th className="border border-black px-4 py-2">Tempo perdido</th>
-                <th className="border border-black px-4 py-2">Peças perdidas</th>
-                <th className="border border-black px-4 py-2">OEE</th>
+                <th className={cn(classes.header, 'min-w-28')} >Hora</th>
+                <th className={cn(classes.header, 'min-w-20')} >Target</th>
+                <th className={cn(classes.header, 'min-w-28')} >Produzido</th>
+                <th className={cn(classes.header, 'min-w-20')} >OEE</th>
+                <th className={cn(classes.header, 'min-w-80')} >Perdas</th>
+                <th className={cn(classes.header, 'min-w-20')} >Tempo perdido</th>
               </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => (<>
-                <tr key={index}>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    06:29
+              {Object.entries(controller.data.value ?? {})?.map(([key, item], index) => (<Fragment  key={index}>
+                <tr>
+                  <td
+                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    className={cn(classes.cell)}
+                  >
+                    {key}
                   </td>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    10
+                  <td
+                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    className={cn(classes.cell)}
+                  >
+                    {item.process?.target}
                   </td>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    10
+                  <td
+                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    className={cn(classes.cell)}
+                  >
+                    {item.pieces_quantity}
                   </td>
-                  <td className="border border-black px-4 py-2"></td>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    2
+                  <td
+                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    className={cn(classes.cell)}
+                  >
+                    {((item.oee || 0) * 100).toFixed(0)}%
                   </td>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    3
+
+                  <td className={cn(classes.cell, 'border-b-[2px] text-start')}>
+                    <span className="font-bold" >{item?.production_losses?.length! > 0 ?(item?.production_losses as any)[0].cause + ':': ''}</span>
+                    {item?.production_losses?.length! > 0 ?' ' + (item?.production_losses as any)[0].description: ''}
+                    {item?.production_losses?.length! > 0 ?' - ' + (item?.production_losses as any)[0].time + 'min': ''}
                   </td>
-                  <td rowSpan={item.production_losses.length} className="border border-black px-4 py-2 align-top">
-                    60%
+
+                  <td
+                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    className={cn(classes.cell)}
+                  >
+                    {item?.totalReasonsTime!> 0 ? item?.totalReasonsTime +'min':''}
                   </td>
                 </tr>
-                {item.production_losses.slice(1).map((_, lossIndex) => (<>
-                  <tr key={index+ lossIndex}>
-                    <td className="border border-black px-4 py-2">
-
+                {item.production_losses?.slice(1).map((item, lossIndex) => (<Fragment key={index + lossIndex}>
+                  <tr>
+                    <td className={cn(classes.cell, 'border-b-[2px] border-t-[2px] text-start')}>
+                      <span className="font-bold" >{item.cause}: </span>
+                      {item.classification} - {item.time}min
                     </td>
                   </tr>
-                </>))}
-              </>))}
+                </Fragment >))}
+              </Fragment >))}
             </tbody>
           </table>
       </section>

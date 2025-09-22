@@ -1,6 +1,7 @@
 import { singleton } from "tsyringe";
 import { ProductionRegistry, ProductionRegistryCreateDto } from "@/entities/ProductionRegistry";
 import { supabase } from "./supabase";
+import { date } from "zod";
 
 @singleton()
 export class ProductionRegistryRepository {
@@ -41,8 +42,9 @@ export class ProductionRegistryRepository {
       .select<string, ProductionRegistry>(`*, process (*), production_losses (*)`)
       .order("created_at", { ascending: false });
 
-    if (filters.createdAtStart) q = q.gte('created_at', filters.createdAtStart);
-    if (filters.createdAtEnd) q = q.lte('created_at', filters.createdAtEnd);
+
+    if (filters.createdAtStart) q = q.gte('created_at', new Date(filters.createdAtStart.getTime() + 3 * 60 * 60 * 1000).toISOString());
+    if (filters.createdAtEnd) q = q.lte('created_at', new Date(filters.createdAtEnd.getTime() + 3 * 60 * 60 * 1000).toISOString());
     if (filters.process_id) q = q.eq('process_id', filters.process_id);
     if (filters.turn) q = q.eq('turn', filters.turn);
     if (filters.project) q = q.ilike('project', `%${filters.project}%`);
@@ -57,8 +59,8 @@ export class ProductionRegistryRepository {
 }
 
 type Filters = {
-  createdAtStart?: string;
-  createdAtEnd?: string;
+  createdAtStart?: Date;
+  createdAtEnd?: Date;
   process_id?: number;
   turn?: string;
   project?: string;
