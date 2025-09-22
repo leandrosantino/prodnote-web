@@ -1,7 +1,6 @@
 import { singleton } from "tsyringe";
 import { ProductionRegistry, ProductionRegistryCreateDto } from "@/entities/ProductionRegistry";
 import { supabase } from "./supabase";
-import { date } from "zod";
 
 @singleton()
 export class ProductionRegistryRepository {

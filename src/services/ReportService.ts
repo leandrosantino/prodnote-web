@@ -70,10 +70,11 @@ export class ReportService {
       'Retrabalho': 0,
       'Refugo': 0,
       'RH': 0,
+      'Treinamento/DDS': 0,
+      'Absenteísmo': 0,
       'Logística': 0,
       'Operacional': 0,
-      'Micro paradas': 0
-    }
+    } as any
 
     data.forEach(({ production_losses: productionEfficiencyLosses }) => {
       productionEfficiencyLosses.forEach((loss) => {

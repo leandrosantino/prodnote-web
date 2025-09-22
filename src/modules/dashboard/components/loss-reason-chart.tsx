@@ -27,6 +27,8 @@ const chartConfig = {
   'Retrabalho': { label: 'Retrabalho'},
   'Refugo': { label: 'Refugo'},
   'RH': { label: 'RH'},
+  'Treinamento/DDS': { label: 'Treinamento/DDS'},
+  'Absenteísmo': { label: 'Absenteísmo'},
   'Logística': { label: 'Logística'},
   'Operacional': { label: 'Operacional'},
   'Micro paradas': { label: 'Micro-paradas'}
