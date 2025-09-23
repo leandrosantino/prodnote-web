@@ -58,7 +58,7 @@ export function ProductionView(controller: ProductionController) {
                 <TableHead className={cn(classes.header)} >Perda</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className='max-h-[650px]  h-full' >
+            <TableBody className='max-h-[550px]  h-full' >
               {Object.entries(controller.data.value ?? {})?.map(([key, item], index) => (<Fragment  key={index}>
                 {(index == 0 || index == 5 || index == 15) &&
                 <TableRow>
