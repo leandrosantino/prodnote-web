@@ -4,7 +4,7 @@ import { Unavailable } from "./components/unavailable";
 import { Success } from "./modules/form/components/Success";
 import Dashboard from "./modules/dashboard/dashboard.controller";
 import Table from "./modules/table/table.controller";
-// import Production from "./modules/production/production.controller";
+import Production from "./modules/production/production.controller";
 
 export function AppRoutes() {
 
@@ -19,7 +19,7 @@ export function AppRoutes() {
         <Route path="/dashboard" Component={Dashboard} />
         <Route path="/success" Component={Success} />
         <Route path="/:ute" Component={Form} />
-        {/* <Route path="/prod/:ute" Component={Production} /> */}
+        <Route path="/prod/:ute" Component={Production} />
       </Routes>
     </BrowserRouter>
   )

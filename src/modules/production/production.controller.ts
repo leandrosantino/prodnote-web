@@ -28,8 +28,8 @@ export class ProductionController extends ComponentController {
       (async () => {
         const temp: ProductionController['data']['value'] = {} as any
         const registries = await this.productionRegistryRepository.findMany({
-          createdAtStart: subDays(set(new Date(), { hours: 0, minutes: 0, seconds: 0 }), 3.5),
-          createdAtEnd: subDays(set(new Date(), { hours: 23, minutes: 59, seconds: 59 }), 3.5),
+          createdAtStart: subDays(set(new Date(), { hours: 0, minutes: 0, seconds: 0 }), 1),
+          createdAtEnd: subDays(set(new Date(), { hours: 23, minutes: 59, seconds: 59 }), 1),
           process_id: 29
         })
 

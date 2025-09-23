@@ -2,13 +2,14 @@ import { Fragment } from "react/jsx-runtime";
 import { ProductionController } from "./production.controller";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 
 export function ProductionView(controller: ProductionController) {
 
   const classes = {
-    cell: "border border-black p-2 border-b-[3px] border-t-[3px]",
-    header: 'border border-black p-2'
+    cell: "text-center",
+    header: 'text-center text-foreground'
   }
 
   return (
@@ -19,70 +20,65 @@ export function ProductionView(controller: ProductionController) {
         <Button onClick={() => controller.navigate('/form/' + controller.params?.ute)} >Laçamento</Button>
       </header>
 
-      <section className="overflow-auto" >
-          <table className="w-full table-auto text-center border border-zinc-500">
-            <thead>
-              <tr>
-                <th className={cn(classes.header, 'min-w-28')} >Hora</th>
-                <th className={cn(classes.header, 'min-w-20')} >Target</th>
-                <th className={cn(classes.header, 'min-w-28')} >Produzido</th>
-                <th className={cn(classes.header, 'min-w-20')} >OEE</th>
-                <th className={cn(classes.header, 'min-w-80')} >Perdas</th>
-                <th className={cn(classes.header, 'min-w-20')} >Tempo perdido</th>
-              </tr>
-            </thead>
-            <tbody>
+      <section className="rounded-md border overflow-auto" >
+          <Table>
+            <TableHeader className='bg-orange-200 shadow-md rounded-t-md max-md:pr-0'>
+              <TableRow>
+                <TableHead className={cn(classes.header, 'min-w-20')} >Hora</TableHead>
+                <TableHead className={cn(classes.header, 'min-w-20')} >Meta</TableHead>
+                <TableHead className={cn(classes.header, 'min-w-20')} >Produzido</TableHead>
+                <TableHead className={cn(classes.header)} >OEE</TableHead>
+                <TableHead className={cn(classes.header)} >Perda</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className='max-h-[650px]  h-full' >
               {Object.entries(controller.data.value ?? {})?.map(([key, item], index) => (<Fragment  key={index}>
-                <tr>
-                  <td
-                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
-                    className={cn(classes.cell)}
+                {(index == 0 || index == 5 || index == 15) &&
+                <TableRow>
+                  <TableCell
+                    className="bg-zinc-200 text-center p-[2px] font-bold border border-zinc-400"
+                  >
+                    {index == 0 && '3º Turno'}
+                    {index == 5 && '1º Turno'}
+                    {index == 15 && '2º Turno'}
+                  </TableCell>
+                </TableRow>
+                }
+                <TableRow
+                  className={cn(
+                    'hover:bg-muted/50 cursor-pointer',
+                    item.id && 'bg-blue-50'
+                  )}
+                >
+                  <TableCell
+                    className={cn(classes.cell, 'min-w-20 max-md:!text-xs')}
                   >
                     {key}
-                  </td>
-                  <td
-                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
-                    className={cn(classes.cell)}
+                  </TableCell>
+                  <TableCell
+                    className={cn(classes.cell, 'min-w-20')}
                   >
                     {item.process?.target}
-                  </td>
-                  <td
-                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
-                    className={cn(classes.cell)}
+                  </TableCell>
+                  <TableCell
+                    className={cn(classes.cell, 'min-w-20')}
                   >
                     {item.pieces_quantity}
-                  </td>
-                  <td
-                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                  </TableCell>
+                  <TableCell
                     className={cn(classes.cell)}
                   >
-                    {((item.oee || 0) * 100).toFixed(0)}%
-                  </td>
-
-                  <td className={cn(classes.cell, 'border-b-[2px] text-start')}>
-                    <span className="font-bold" >{item?.production_losses?.length! > 0 ?(item?.production_losses as any)[0].cause + ':': ''}</span>
-                    {item?.production_losses?.length! > 0 ?' ' + (item?.production_losses as any)[0].description: ''}
-                    {item?.production_losses?.length! > 0 ?' - ' + (item?.production_losses as any)[0].time + 'min': ''}
-                  </td>
-
-                  <td
-                    rowSpan={item.production_losses?.length! > 0? item.production_losses?.length: 1}
+                    {item.oee && (item.oee * 100).toFixed(0) + '%'}
+                  </TableCell>
+                  <TableCell
                     className={cn(classes.cell)}
                   >
                     {item?.totalReasonsTime!> 0 ? item?.totalReasonsTime +'min':''}
-                  </td>
-                </tr>
-                {item.production_losses?.slice(1).map((item, lossIndex) => (<Fragment key={index + lossIndex}>
-                  <tr>
-                    <td className={cn(classes.cell, 'border-b-[2px] border-t-[2px] text-start')}>
-                      <span className="font-bold" >{item.cause}: </span>
-                      {item.classification} - {item.time}min
-                    </td>
-                  </tr>
-                </Fragment >))}
+                  </TableCell>
+                </TableRow>
               </Fragment >))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
       </section>
 
     </div>
