@@ -121,8 +121,8 @@ export class FormController extends ComponentController {
 
     data.reasons = this.formatReasons(data)
     this.productionRegistryService.createRecord(data)
-      .then(resp => {
-        this.navigate('/success', { state: resp })
+      .then(() => {
+        this.navigate(`/${this.routeParams.ute}/${data.process}`, { state: { time_tag: data.hourInterval } })
       })
       .catch(e => console.log((e as Error)))
       .finally(() => { this.loading.set(false) })

@@ -11,6 +11,9 @@ import { ReactNode } from "react"
 import { TableData } from "../table-columns"
 
 export function LossesReasonDialog({ children, efficiencyRecord }: {children: ReactNode, efficiencyRecord: TableData}) {
+
+  if(!efficiencyRecord.process) return children
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -19,17 +22,19 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
       <DialogContent className="md:min-w-[700px] md:min-h-[400px] max-sm:h-screen max-sm:w-screen flex flex-col">
         <DialogHeader>
           <DialogTitle>Perdas de Eficiência</DialogTitle>
-          <DialogDescription>
-            {efficiencyRecord.created_at.toLocaleDateString()} - {efficiencyRecord.time_tag} - {efficiencyRecord.process_id}
-          </DialogDescription>
+          { efficiencyRecord.created_at &&
+            <DialogDescription>
+              {efficiencyRecord?.created_at?.toLocaleDateString()} - {efficiencyRecord?.time_tag} - {efficiencyRecord?.process_id}
+            </DialogDescription>
+          }
         </DialogHeader>
         <div className="grid gap-4 py-4 overflow-auto max-h-[300px]">
           {
-            efficiencyRecord.production_losses.length === 0 ?
+            efficiencyRecord?.production_losses?.length === 0 ?
             <>
               <span className="text-muted-foreground w-full h-[200px] flex justify-center items-center" >Nenhuma perda apontada...</span>
             </> :
-            efficiencyRecord.production_losses.map((item, index) => (
+            efficiencyRecord?.production_losses?.map((item, index) => (
               <Card key={index} >
                 <CardHeader>
                   <CardTitle>{item.cause ?? item.classification}</CardTitle>

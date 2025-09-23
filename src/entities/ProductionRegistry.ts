@@ -23,7 +23,7 @@ export class ProductionRegistry {
   constructor(data: Omit<
     ProductionRegistry,
     'totalReasonsTime' | 'oee' | 'lostTime' | 'createData' | 'id' |
-    'created_at' | 'process' | 'totalScrap'
+    'created_at' | 'process' | 'totalScrap' | 'fractionalTarget'
   >) {
     Object.assign(this, data);
     this.created_at = this.convertCreatedAtToUTC3(new Date(this.created_at))
@@ -32,6 +32,10 @@ export class ProductionRegistry {
   private convertCreatedAtToUTC3(dateUTC: string | Date): Date {
     const date = new Date(dateUTC);
     return new Date(date.getTime() - 3 * 60 * 60 * 1000);
+  }
+
+  get fractionalTarget() {
+    return Math.round(this.interval_in_minutes * this.process.target / 60)
   }
 
   get createData() {

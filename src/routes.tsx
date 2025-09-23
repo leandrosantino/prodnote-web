@@ -18,8 +18,9 @@ export function AppRoutes() {
         <Route path="/table" Component={Table} />
         <Route path="/dashboard" Component={Dashboard} />
         <Route path="/success" Component={Success} />
-        <Route path="/:ute" Component={Form} />
-        <Route path="/prod/:ute" Component={Production} />
+        <Route path="/form/:ute" Component={Form} />
+        <Route path="/:ute/:process_id" Component={Production} />
+        <Route path="/:ute" Component={Production} />
       </Routes>
     </BrowserRouter>
   )

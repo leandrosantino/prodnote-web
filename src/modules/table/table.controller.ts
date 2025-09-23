@@ -19,7 +19,7 @@ export class TableController extends ComponentController {
   private navigate = useNavigate()
   private sorting = useStateObject<SortingState>([])
   private columnFilters = useStateObject<ColumnFiltersState>([])
-  private data = useStateObject<TableData[]>([])
+  private data = this.useState<TableData[]>([])
 
   public dateFilter = useStateObject<Date | undefined>()
   public areaFilter = useStateObject<string | undefined>()
@@ -117,6 +117,7 @@ export class TableController extends ComponentController {
             ute: process.ute,
             oee: registry.oee,
             target: process.target,
+            fractionalTarget: '' as any,
             createData: '' as any, lostTime: '' as any, totalReasonsTime: '' as any, totalScrap: '' as any
           }
         })
