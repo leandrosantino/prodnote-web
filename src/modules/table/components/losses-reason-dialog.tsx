@@ -19,7 +19,7 @@ export function LossesReasonDialog({ children, efficiencyRecord }: {children: Re
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="md:min-w-[700px] md:min-h-[400px] max-sm:h-screen max-sm:w-screen flex flex-col">
+      <DialogContent className="md:min-w-[700px] md:min-h-[400px] max-sm:h-[100dvh] max-sm:w-screen flex flex-col">
         <DialogHeader>
           <DialogTitle>Perdas de Eficiência</DialogTitle>
           { efficiencyRecord.created_at &&
