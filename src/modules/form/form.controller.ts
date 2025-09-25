@@ -17,9 +17,12 @@ import { ProcessRepository } from "@/repositories/ProcessRepository";
 import { ProductionRegistryService } from "@/services/ProductionRegistryService";
 import { FromView } from "./form.view";
 import { ProductionRegistry } from "@/entities/ProductionRegistry";
+import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryRepository";
 
 @component(FromView)
 export class FormController extends ComponentController {
+
+  TOLERANCE = 2
 
   public form = useForm<OeeForm>({
     resolver: zodResolver(oeeFormSchema),
@@ -42,6 +45,8 @@ export class FormController extends ComponentController {
   private navigate = useNavigate()
   private routeParams = useParams<{ ute: UteKeys }>()
 
+  public errorMessage = this.useState<String | null>(null)
+
   private reasons = useWatch({
     control: this.form.control,
     name: "reasons"
@@ -50,6 +55,7 @@ export class FormController extends ComponentController {
 
   constructor(
     @inject('ProcessRepository') private readonly processRepository: ProcessRepository,
+    @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
     @inject('ProductionRegistryService') private readonly productionRegistryService: ProductionRegistryService
   ) {
     super()
@@ -78,6 +84,10 @@ export class FormController extends ComponentController {
       lost_time: lostTime,
       target: process.target
     }))
+  }
+
+  public isValid() {
+    return this.lostPieces.value >= -this.TOLERANCE && this.lostPieces.value <= this.TOLERANCE
   }
 
   private cahngeProjectLists() {
@@ -110,12 +120,31 @@ export class FormController extends ComponentController {
       .catch(console.log)
   }
 
-  handleSave = (data: OeeForm) => {
+  handleSave = async (data: OeeForm) => {
     if (this.processes.value.length == 0) return;
     this.loading.set(true)
+    this.errorMessage.set(null)
 
     if (!this.routeParams.ute || !utePattern.test(this.routeParams.ute)) {
       this.loading.set(false)
+      return
+    }
+
+    if (!this.isValid()) {
+      this.loading.set(false)
+      this.errorMessage.set('Apontamento Inconsistente!!! Verifique os dados.')
+      setTimeout(() => {
+        this.errorMessage.set(null)
+      }, 3000)
+      return
+    }
+
+    if (await this.productionRegistryRepository.exists(data.hourInterval, Number(data.process))) {
+      this.loading.set(false)
+      this.errorMessage.set(`O apontaemnto das ${data.hourInterval} já foi realizado!`)
+      setTimeout(() => {
+        this.errorMessage.set(null)
+      }, 3000)
       return
     }
 

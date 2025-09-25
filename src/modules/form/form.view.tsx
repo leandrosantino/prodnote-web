@@ -6,7 +6,6 @@ import { Reasons } from './components/Reasons';
 import { FormController } from './form.controller';
 import { Container } from './components/Container';
 
-
 export function FromView(controller: FormController) {
 
   return (
@@ -33,14 +32,12 @@ export function FromView(controller: FormController) {
           <Input type='number' name='piecesQuantity' label='Quantidade de Peças Boas:' />
 
 
-          {controller.lostTime.value < -3 || controller.lostPieces.value < -3?<>
-            <div className='text-red-500' >Apontamento Inconsistente!!! Verifique os dados.</div>
-          </>:<>
+          {controller.errorMessage.value ?
+            <div className='text-red-500' >{controller.errorMessage?.value}</div>:
             <div className='text-red-500' >
               Tempo perdido: {controller.lostTime.value + ' min '} <br />
               Peças perdidas: {controller.lostPieces.value + ' pçs'}
             </div>
-          </>
           }
 
           <div className="flex flex-col gap-2">

@@ -1,6 +1,8 @@
 import { singleton } from "tsyringe";
 import { ProductionRegistry, ProductionRegistryCreateDto } from "@/entities/ProductionRegistry";
 import { supabase } from "./supabase";
+import { set } from "date-fns";
+import { HourIntervals } from "@/entities/HoursIntervals";
 
 @singleton()
 export class ProductionRegistryRepository {
@@ -25,6 +27,24 @@ export class ProductionRegistryRepository {
 
       if (lossesError) throw lossesError
     }
+  }
+
+  async exists(time_tag: HourIntervals, process_id: number) {
+    const { error } = await supabase
+      .from(ProductionRegistryRepository.tableName)
+      .select('*')
+      .gte('created_at', set(this.getNow(), { hours: 0, minutes: 0, seconds: 0 }).toISOString())
+      .lte('created_at', set(this.getNow(), { hours: 23, minutes: 59, seconds: 59 }).toISOString())
+      .eq('time_tag', time_tag)
+      .eq('process_id', process_id)
+      .single<ProductionRegistry>()
+    if (error) return false
+    return true
+  }
+
+  private getNow() {
+    const now = new Date()
+    return new Date(now.getTime() + 3 * 60 * 60 * 1000)
   }
 
   async getAll() {
@@ -79,6 +99,8 @@ export class ProductionRegistryRepository {
   }
 
 }
+
+
 
 type Filters = {
   createdAtStart?: Date;

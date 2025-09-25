@@ -4,7 +4,8 @@ type ButtonProps = {
   color: 'blue' | 'green'
   type: 'button' | 'submit'
   onClick?: () => void
-  loading?: boolean
+  loading?: boolean,
+  disabled?: boolean
 }
 
 export function Button({ text, color, loading, ...rest}: ButtonProps){
