@@ -7,14 +7,13 @@ import { DatePicker } from "@/components/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LossesReasonDialog } from "../table/components/losses-reason-dialog";
 import { CopyPlus } from "lucide-react";
-import { Loading } from "@/components/Loading";
 import { Spinner } from "@/components/Spinner";
 
 
 export function ProductionView(controller: ProductionController) {
 
   const classes = {
-    cell: "text-center",
+    cell: "text-center border align-middle",
     header: 'text-center text-foreground border-b-[3px] border-orange-300 border-b-orange-500'
   }
 
@@ -60,8 +59,9 @@ export function ProductionView(controller: ProductionController) {
             <TableHeader className='bg-orange-200 shadow-md rounded-t-md max-md:pr-0'>
               <TableRow>
                 <TableHead className={cn(classes.header, 'min-w-20')} >Hora</TableHead>
-                <TableHead className={cn(classes.header, 'min-w-20')} >Meta</TableHead>
-                <TableHead className={cn(classes.header, 'min-w-20')} >Produzido</TableHead>
+                <TableHead className={cn(classes.header, 'min-w-[50px]')} >Projeto</TableHead>
+                <TableHead className={cn(classes.header, 'min-w-[50px]')} >Meta</TableHead>
+                <TableHead className={cn(classes.header, 'min-w-[50px]')} >Prod.</TableHead>
                 <TableHead className={cn(classes.header)} >OEE</TableHead>
                 <TableHead className={cn(classes.header)} >Perda</TableHead>
               </TableRow>
@@ -91,18 +91,21 @@ export function ProductionView(controller: ProductionController) {
                       (item.time_tag && controller.location?.state?.time_tag == item.time_tag) && 'bg-green-50'
                     )}
                   >
-                    <TableCell
-                      className={cn(classes.cell, 'min-w-20 max-md:!text-xs')}
-                    >
+                    <TableCell className={cn(classes.cell, 'min-w-20 max-md:!text-xs')}>
                       {key}
                     </TableCell>
                     <TableCell
-                      className={cn(classes.cell, 'min-w-20')}
+                      className={cn(classes.cell, 'min-w-[50px]')}
+                    >
+                      {item.project}
+                    </TableCell>
+                    <TableCell
+                      className={cn(classes.cell, 'min-w-[50px]')}
                     >
                       {item.interval_in_minutes && item.fractionalTarget}
                     </TableCell>
                     <TableCell
-                      className={cn(classes.cell, 'min-w-20')}
+                      className={cn(classes.cell, 'min-w-[50px]')}
                     >
                       {item.pieces_quantity}
                     </TableCell>

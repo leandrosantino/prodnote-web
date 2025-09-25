@@ -20,6 +20,7 @@ export class ProcessRepository {
     const { data, error } = await supabase
       .from("process")
       .select<string, Process>("*")
+      .order('id')
       .eq("ute", ute);
 
     if (error) throw error;
@@ -29,7 +30,8 @@ export class ProcessRepository {
   async getAll(): Promise<Process[]> {
     const { data, error } = await supabase
       .from("process")
-      .select<string, Process>("*");
+      .select<string, Process>("*")
+      .order('id');
 
     if (error) throw error;
     return data ?? [];
