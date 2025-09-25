@@ -3,12 +3,12 @@ import { TableController } from "./table.controller"
 import { ArrowLeft, FilterX } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { flexRender } from "@tanstack/react-table"
-import { Loading } from "@/components/Loading"
 import { LossesReasonDialog } from "./components/losses-reason-dialog"
 import { DatePicker } from "@/components/date-picker"
 import { AreaSelector } from "../../components/area-selector"
 import { TurnSelector } from "../../components/turn-selector"
 import { ProcessSelector } from "../../components/process-selector"
+import { Loading } from "@/components/Loading"
 
 export function TableView(controller: TableController){
   return (

@@ -108,7 +108,7 @@ export class TableController extends ComponentController {
   private async loadData() {
     this.loading.set(true)
     try {
-      const registries = (await this.productionRegistryRepository.findMany())
+      const registries = (await this.productionRegistryRepository.getAll())
         .map(registry => {
           const { process, ...item } = registry
           return {

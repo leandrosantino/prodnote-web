@@ -133,7 +133,7 @@ export class DashboardController extends ComponentController {
   private async loadData() {
     this.loading.set(true)
     try {
-      const data = await this.productionRegistryRepository.findMany()
+      const data = await this.productionRegistryRepository.getAll()
       this.data.set(data)
       this.dataFiltered.set(data)
       this.dataFilteredByMonth.set(data)

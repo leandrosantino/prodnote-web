@@ -51,8 +51,8 @@ export class ProductionRegistryService {
   }
 
   async exportToExcel(): Promise<void> {
-    const registries = (await this.productionRegistryRepository.getAll())
-      .map(registry => {
+    const $registries = this.productionRegistryRepository.getAll()
+      .then(registries => registries.map(registry => {
         return {
           'id': registry.id,
           'data': registry.created_at.toLocaleDateString(),
@@ -66,25 +66,35 @@ export class ProductionRegistryService {
           'peças boas produzidas': registry.pieces_quantity,
           'tempo de produção (min)': registry.interval_in_minutes
         }
-      })
+      }))
 
-    const production_losses = (await this.get_production_losses())
-      .map(item => ({
+    const $production_losses = this.get_production_losses()
+      .then(items => items.map(item => ({
         'id': item.id,
         'causa': item.cause,
         'classificação': item.classification,
         'descrição': item.description,
         'tempo perdido (min)': item.time,
         'id do registro de produção': item.production_registry_id
-      }))
+      })))
 
-    const processes = (await this.processRepository.getAll())
-      .map(process => ({
+    const $processes = this.processRepository.getAll()
+      .then(processes => processes.map(process => ({
         'id': process.id,
         'descrição': process.description,
         'meta': process.target,
         'ute': process.ute,
-      }))
+      })))
+
+    const [registries, production_losses, processes] = await Promise.all([
+      $registries,
+      $production_losses,
+      $processes
+    ])
+
+    console.log(registries)
+    console.log(production_losses)
+    console.log(processes)
 
     const workbook = XLSX.utils.book_new();
 

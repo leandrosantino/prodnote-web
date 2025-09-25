@@ -28,6 +28,9 @@ export class ProductionController extends ComponentController {
   public processes = this.useState<Process[]>([])
   public selectedProcesses = this.useState<Process>()
 
+
+  public loading = this.useState(true)
+
   constructor(
     @inject('ProductionRegistryRepository') private readonly productionRegistryRepository: ProductionRegistryRepository,
     @inject('ProcessRepository') private readonly processRepository: ProcessRepository
@@ -56,6 +59,7 @@ export class ProductionController extends ComponentController {
 
 
   private async loadProcesses() {
+    this.loading.set(true)
     const processes = await this.processRepository.getByUte(this.params?.ute!)
     this.processes.set(processes)
     if (this.params.process_id) {
@@ -64,12 +68,18 @@ export class ProductionController extends ComponentController {
       this.processFilter.set(selected_process.id.toString())
       this.selectedProcesses.set(selected_process)
     }
+    this.loading.set(false)
   }
 
   private async loadData() {
-    const process_id = this.processFilter.value ? Number(this.processFilter.value) : Number(this.params?.process_id!)
-    const temp: ProductionController['data']['value'] = {} as any
+    this.loading.set(true)
 
+    const temp: ProductionController['data']['value'] = {} as any
+    hourIntervals.forEach(item => {
+      temp[item] = {}
+    })
+
+    const process_id = this.processFilter.value ? Number(this.processFilter.value) : Number(this.params?.process_id!)
     let registries: ProductionRegistry[] = []
     if (process_id) {
       registries = await this.productionRegistryRepository.findMany({
@@ -81,15 +91,12 @@ export class ProductionController extends ComponentController {
 
     // console.log(registries)
 
-    hourIntervals.forEach(item => {
-      temp[item] = {}
-    })
-
     registries.forEach(item => {
       temp[item.time_tag] = item
     })
 
     this.data.set(temp)
+    this.loading.set(false)
   }
 
 }

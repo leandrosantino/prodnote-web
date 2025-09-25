@@ -7,6 +7,8 @@ import { DatePicker } from "@/components/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LossesReasonDialog } from "../table/components/losses-reason-dialog";
 import { CopyPlus } from "lucide-react";
+import { Loading } from "@/components/Loading";
+import { Spinner } from "@/components/Spinner";
 
 
 export function ProductionView(controller: ProductionController) {
@@ -22,8 +24,15 @@ export function ProductionView(controller: ProductionController) {
       <header className="flex justify-between mb-2" >
         <div>
           <h1 className="text-2xl font-bold" >Filme de Produção</h1>
-          {controller.selectedProcesses.value?.description && controller.selectedProcesses.value.description + ' - '}
-          {controller.params?.ute}
+          {!controller.loading.value ? <>
+            {controller.selectedProcesses.value?.description && controller.selectedProcesses.value.description + ' - '}
+            {controller.params?.ute}
+          </> : <>
+            <div className="flex items-center gap-2">
+              <Spinner />
+              <span className="text-muted-foreground" >Carregando...</span>
+            </div>
+          </> }
         </div>
         <Button onClick={() => controller.navigate('/form/' + controller.params?.ute)} >
           <CopyPlus />
@@ -45,7 +54,6 @@ export function ProductionView(controller: ProductionController) {
           </SelectContent>
         </Select>
       </div>
-
 
       <section className="rounded-md border overflow-auto" >
           <Table>

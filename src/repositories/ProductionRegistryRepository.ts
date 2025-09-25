@@ -28,11 +28,34 @@ export class ProductionRegistryRepository {
   }
 
   async getAll() {
-    const { data, error } = await supabase
-      .from(ProductionRegistryRepository.tableName)
-      .select<string, ProductionRegistry>("*, process (*)")
-    if (error) throw new Error(`Error fetching data: ${error.message}`);
-    return data.map(item => new ProductionRegistry(item));
+
+    const take = 1000
+    let cursor = 0
+    let lastPageSize = 0
+    const temp: ProductionRegistry[] = []
+
+    do {
+      const query = supabase
+        .from(ProductionRegistryRepository.tableName)
+        .select<string, ProductionRegistry>("*, process (*), production_losses (*)")
+        .limit(take)
+        .order("id", { ascending: false })
+
+      if (cursor != 0) query.lt('id', cursor)
+
+      const { data, error } = await query
+
+      if (error) throw new Error(`Error fetching data: ${error.message}`);
+      cursor = data[data?.length - 1].id
+      lastPageSize = data?.length
+
+      // console.log(cursor, lastPageSize, data)
+
+      temp.push(...data)
+
+    } while (!(lastPageSize < take))
+
+    return temp.map(item => new ProductionRegistry(item));
   }
 
   async findMany(filters: Filters = {}): Promise<ProductionRegistry[]> {
