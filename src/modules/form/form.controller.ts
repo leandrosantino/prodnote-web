@@ -22,8 +22,6 @@ import { ProductionRegistryRepository } from "@/repositories/ProductionRegistryR
 @component(FromView)
 export class FormController extends ComponentController {
 
-  TOLERANCE = 2
-
   public form = useForm<OeeForm>({
     resolver: zodResolver(oeeFormSchema),
   })
@@ -87,7 +85,7 @@ export class FormController extends ComponentController {
   }
 
   public isValid() {
-    return this.lostPieces.value >= -this.TOLERANCE && this.lostPieces.value <= this.TOLERANCE
+    return this.lostPieces.value >= -10 && this.lostPieces.value <= 1
   }
 
   private cahngeProjectLists() {
