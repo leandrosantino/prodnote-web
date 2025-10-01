@@ -38,7 +38,7 @@ export class ProductionRegistryService {
   private isLastHourOfSecondTurn() {
     const now = new Date()
     const start = set(subDays(now, 1), { hours: 23, minutes: 59, seconds: 59, milliseconds: 999 });
-    const end = set(now, { hours: 1, minutes: 14, seconds: 0, milliseconds: 0 });
+    const end = set(now, { hours: 1, minutes: 30, seconds: 0, milliseconds: 0 });
     return isAfter(now, start) && (isBefore(now, end) || isEqual(now, end));
   }
 
