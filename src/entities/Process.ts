@@ -6,4 +6,5 @@ export interface Process {
   target: number
   projects: string[]
   ute: UteKeys
+  tech: string
 }

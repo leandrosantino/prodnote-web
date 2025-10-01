@@ -43,11 +43,33 @@ export class ProductionRegistryService {
   }
 
   private async get_production_losses() {
-    const { data, error } = await supabase.from('production_losses')
-      .select<string, ProductionLosses>('*')
 
-    if (error) throw new Error(`Error fetching data: ${error.message}`);
-    return data
+    const take = 1000
+    let cursor = 0
+    let lastPageSize = 0
+    const temp: ProductionLosses[] = []
+
+    do {
+      const query = supabase
+        .from('production_losses')
+        .select<string, ProductionLosses>('*')
+        .limit(take)
+        .order("id", { ascending: false })
+
+      if (cursor != 0) query.lt('id', cursor)
+      const { data, error } = await query
+      if (error) throw new Error(`Error fetching data: ${error.message}`);
+
+      cursor = data[data?.length - 1].id
+      lastPageSize = data?.length
+
+      // console.log(cursor, lastPageSize, data)
+
+      temp.push(...data)
+
+    } while (!(lastPageSize < take))
+
+    return temp
   }
 
   async exportToExcel(): Promise<void> {
@@ -84,7 +106,9 @@ export class ProductionRegistryService {
         'descrição': process.description,
         'meta': process.target,
         'ute': process.ute,
+        'tecnologia': process.tech
       })))
+
 
     const [registries, production_losses, processes] = await Promise.all([
       $registries,

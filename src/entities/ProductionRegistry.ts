@@ -125,6 +125,7 @@ export class ProductionRegistry {
       turn: formData.turn,
       production_losses: formData.reasons
         .map(item => ({
+          id: undefined as any,
           classification: classificationTypesMap[item.class as ClassificationTypes],
           description: item.description,
           cause: item.class as any,
