@@ -19,7 +19,10 @@ export class ProductionRegistryRepository {
     if (registryError) throw registryError
 
     if (production_losses.length > 0) {
-      production_losses.forEach(loss => { loss.production_registry_id = registry.id })
+      production_losses.forEach(loss => {
+        delete (loss as any).id
+        loss.production_registry_id = registry.id
+      })
 
       const { error: lossesError } = await supabase
         .from('production_losses')

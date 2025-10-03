@@ -63,6 +63,7 @@ export class FormController extends ComponentController {
     useEffect(() => { this.cahngeProjectLists() }, [this.form.watch('process')])
     useEffect(() => { this.calculateLosses() }, [
       this.form.watch('piecesQuantity'),
+      this.form.watch('process'),
       this.reasons
     ])
   }
@@ -77,11 +78,19 @@ export class FormController extends ComponentController {
     productionRegistry.process = process
 
     const lostTime = productionRegistry.lostTime - productionRegistry.totalReasonsTime
-    this.lostTime.set(lostTime)
-    this.lostPieces.set(ProductionRegistry.convertLostTimeToPieces({
+    const lostPieces = ProductionRegistry.convertLostTimeToPieces({
       lost_time: lostTime,
       target: process.target
-    }))
+    })
+
+    if (isNaN(lostPieces) || isNaN(lostTime)) {
+      this.lostTime.set(0)
+      this.lostPieces.set(0)
+      return
+    }
+
+    this.lostTime.set(lostTime)
+    this.lostPieces.set(lostPieces)
   }
 
   public isValid() {
