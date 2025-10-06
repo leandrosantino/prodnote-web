@@ -114,7 +114,7 @@ export class ProductionRegistry {
   static fromOeeForm(formData: OeeForm) {
     let interval_in_minutes = 60;
     if (formData.hourInterval === '15:00-15:48') interval_in_minutes = 48
-    if (formData.hourInterval === '15:49-15:59') interval_in_minutes = 10
+    if (formData.hourInterval === '15:49-16:59') interval_in_minutes = 70
 
     return new ProductionRegistry({
       process_id: Number(formData.process),
